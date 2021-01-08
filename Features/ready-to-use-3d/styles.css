@@ -30,7 +30,8 @@ body,
 
 .tooltip {
   position: absolute;
-  display: none;
+  opacity: 0.3;
+  /* display: none; */
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
