@@ -56,7 +56,6 @@ for (const [i, circle] of circles.entries()) {
     let pos = sel.getBoundingClientRect();
     tooltipDiv.style.display = "block";
     tooltipDiv.style.top = pos.top + 40 + "px";
-    console.log(tooltipDiv.style.top);
     tooltipDiv.style.left = pos.left - 35 + "px";
     imgContainer.appendChild(tooltipDiv);
   };
