@@ -55,8 +55,9 @@ for (const [i, circle] of circles.entries()) {
     let sel = this;
     let pos = sel.getBoundingClientRect();
     tooltipDiv.style.display = "block";
-    tooltipDiv.style.top = pos.top - 30 + "px";
-    tooltipDiv.style.left = pos.left - 40 + "px";
+    tooltipDiv.style.top = pos.top + 40 + "px";
+    console.log(tooltipDiv.style.top);
+    tooltipDiv.style.left = pos.left - 35 + "px";
     imgContainer.appendChild(tooltipDiv);
   };
   circle.appendTooltip();
@@ -67,7 +68,7 @@ const tooltips = document.querySelectorAll(".tooltip");
 // mouse event
 for (const [i, circle] of circles.entries()) {
   circle.addEventListener("mouseenter", function () {
-    circle.setAttribute("r", "6");
+    circle.setAttribute("r", "8");
     for (const [j, tooltip] of tooltips.entries()) {
       if (i === j) {
         tooltip.style.opacity = "1";
@@ -81,6 +82,6 @@ for (const [i, circle] of circles.entries()) {
         tooltip.style.opacity = "0.3";
       }, 500);
     }
-    circle.setAttribute("r", "4");
+    circle.setAttribute("r", "6");
   });
 }
