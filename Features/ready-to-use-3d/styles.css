@@ -31,14 +31,13 @@ body,
 .tooltip {
   position: absolute;
   opacity: 0.3;
-  /* display: none; */
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  border: #d3d3d3 solid 1px;
+  border: none;
   background: #fff;
   color: black;
-  font-size: medium;
+  font-size: small;
   padding: 5px;
   cursor: pointer;
   pointer-events: none;
