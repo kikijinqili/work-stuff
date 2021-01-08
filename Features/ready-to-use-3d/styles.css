@@ -1,0 +1,44 @@
+body,
+* {
+  margin: 0;
+  padding: 0;
+  font: normal 12px/1.35em Arial, Verdana, Geneva, Helvetica, sans-serif;
+}
+
+.main-container {
+  height: 680px;
+  width: 257.5px;
+}
+
+.img-container {
+  position: relative;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.img-container svg {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.circle-path {
+  z-index: 100;
+  cursor: pointer;
+}
+
+.tooltip {
+  position: absolute;
+  display: none;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  border: #d3d3d3 solid 1px;
+  background: #fff;
+  color: black;
+  font-size: medium;
+  padding: 5px;
+  cursor: pointer;
+  pointer-events: none;
+}
