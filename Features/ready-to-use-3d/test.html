@@ -12,82 +12,89 @@
     <div class="main-container">
         <div class="img-container">
 
-            <svg viewBox="-38.625 -102 386.25 1020" preserveAspectRatio="xMinYMin meet">
+            <svg viewBox="-74.25 -68 357.5 680" preserveAspectRatio="xMinYMin meet">
 
-                <defs>
-                    <radialGradient id="myGradient">
-                        <!-- innerside -->
-                        <stop offset="10%" stop-color="#FFFF00" />
-                        <!-- outside -->
-                        <stop offset="95%" stop-color="#FFFF33" />
-                    </radialGradient>
-                </defs>
-
-                <image id="body-img" width="309" height="816" href="assets/readyToUseBody.svg"></image>
+                <image id="body-img" width="206" height="544" href="assets/readyToUseBody.svg"></image>
 
                 <!-- cerebral-cortex -->
-                <circle class="circle-path" id="cerebral-cortex" cx="168" cy="15" r="6" fill="url('#myGradient')">
-                    <animateTransform attributeName="transform" type="translate" dur="4s" values="0,0;-168,-15;0,0"
-                        repeatCount="indefinite"></animateTransform>
-                    <animateTransform attributeName="transform" additive="sum" type="scale" dur="4s" values="1; 2; 1"
-                        repeatCount="indefinite"></animateTransform>
+                <circle class="circle-path" id="cerebral-cortex" cx="112" cy="10" r="6" fill="#FFFF00">
                 </circle>
+                <line x1="118" x2="138" y1="9" y2="9" stroke="black"></line>
+                <rect x="138" y="-4" width="140" height="26" class="tooltip-rect" id="cerebral-cortex-tt"></rect>
+                <text x="203" y="9" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Cerebral
+                    Cortext Model</text>
+                <image class="arrow-gif" x="266" y="4" width="10" height="10" href="assets/arrow.png"></image>
+
                 <!-- ocular -->
-                <circle class="circle-path" id="ocular" cx="180" cy="54" r="6" fill="url('#myGradient')">
-                    <animateTransform attributeName="transform" type="translate" dur="4s" values="0,0;-180,-54;0,0"
-                        repeatCount="indefinite"></animateTransform>
-                    <animateTransform attributeName="transform" additive="sum" type="scale" dur="4s" values="1; 2; 1"
-                        repeatCount="indefinite"></animateTransform>
-                </circle>
+                <circle class="circle-path" id="ocular" cx="120" cy="36" r="6" fill="#FFFF00"></circle>
+                <line x1="126" x2="146" y1="37" y2="37" stroke="black"></line>
+                <rect x="146" y="24" width="90" height="26" class="tooltip-rect" id="ocular-tt"></rect>
+                <text x="186" y="37" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Ocular
+                    Model</text>
+                <image class="arrow-gif" x="224" y="32" width="10" height="10" href="assets/arrow.png"></image>
+
                 <!-- blood-brain-barrier -->
-                <circle class="circle-path" id="blood-brain-barrier" cx="126" cy="27" r="6" fill="url('#myGradient')">
-                    <animateTransform attributeName="transform" type="translate" dur="4s" values="0,0;-126,-27;0,0"
-                        repeatCount="indefinite"></animateTransform>
-                    <animateTransform attributeName="transform" additive="sum" type="scale" dur="4s" values="1; 2; 1"
-                        repeatCount="indefinite"></animateTransform>
-                </circle>
+                <circle class="circle-path" id="blood-brain-barrier" cx="84" cy="18" r="6" fill="#FFFF00"></circle>
+                <line x1="58" x2="78" y1="18" y2="18" stroke="black"></line>
+                <rect x="-32" y="-4" width="90" height="44" class="tooltip-rect" id="blood-brain-barrier-tt"></rect>
+                <text x="18" y="12" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Blood
+                    Brain</text>
+                <text x="18" y="26" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Barrier
+                    Model</text>
+                <image class="arrow-gif" x="-30" y="13" width="10" height="10" href="assets/arrow0.png"></image>
+
                 <!-- lung -->
-                <circle class="circle-path" id="lung" cx="183" cy="195" r="6" fill="url('#myGradient')">
-                    <animateTransform attributeName="transform" type="translate" dur="4s" values="0,0;-183,-195;0,0"
-                        repeatCount="indefinite"></animateTransform>
-                    <animateTransform attributeName="transform" additive="sum" type="scale" dur="4s" values="1; 2; 1"
-                        repeatCount="indefinite"></animateTransform>
-                </circle>
+                <circle class="circle-path" id="lung" cx="122" cy="130" r="6" fill="#FFFF00"></circle>
+                <line x1="128" x2="188" y1="130" y2="130" stroke="black"></line>
+                <rect x="188" y="117" width="86" height="26" class="tooltip-rect" id="lung-tt"></rect>
+                <text x="226" y="130" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Lung
+                    Models</text>
+                <image class="arrow-gif" x="262" y="125" width="10" height="10" href="assets/arrow.png"></image>
+
                 <!-- liver -->
-                <circle class="circle-path" id="liver" cx="120" cy="264" r="6" fill="url('#myGradient')">
-                    <animateTransform attributeName="transform" type="translate" dur="4s" values="0,0;-120,-264;0,0"
-                        repeatCount="indefinite"></animateTransform>
-                    <animateTransform attributeName="transform" additive="sum" type="scale" dur="4s" values="1; 2; 1"
-                        repeatCount="indefinite"></animateTransform>
-                </circle>
+                <circle class="circle-path" id="liver" cx="80" cy="176" r="6" fill="#FFFF00"></circle>
+                <line x1="14" x2="74" y1="176" y2="176" stroke="black"></line>
+                <rect x="-72" y="163" width="86" height="26" class="tooltip-rect" id="liver-tt"></rect>
+                <text x="-24" y="176" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Liver
+                    Models</text>
+                <image class="arrow-gif" x="-70" y="171" width="10" height="10" href="assets/arrow0.png"></image>
+
                 <!-- kidney -->
-                <circle class="circle-path" id="kidney" cx="177" cy="318" r="6" fill="url('#myGradient')">
-                    <animateTransform attributeName="transform" type="translate" dur="4s" values="0,0;-177,-318;0,0"
-                        repeatCount="indefinite"></animateTransform>
-                    <animateTransform attributeName="transform" additive="sum" type="scale" dur="4s" values="1; 2; 1"
-                        repeatCount="indefinite"></animateTransform>
-                </circle>
+                <circle class="circle-path" id="kidney" cx="118" cy="212" r="6" fill="#FFFF00"></circle>
+                <line x1="124" x2="192" y1="212" y2="212" stroke="black"></line>
+                <rect x="192" y="199" width="90" height="26" class="tooltip-rect" id="kidney-tt"></rect>
+                <text x="232" y="212" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Kidney
+                    Model</text>
+                <image class="arrow-gif" x="270" y="207" width="10" height="10" href="assets/arrow.png"></image>
+
                 <!-- mesenchymal-stem-cell -->
-                <circle class="circle-path" id="mesenchymal-stem-cell" cx="195" cy="519" r="6" fill="url('#myGradient')">
-                    <animateTransform attributeName="transform" type="translate" dur="4s" values="0,0;-195,-519;0,0"
-                        repeatCount="indefinite"></animateTransform>
-                    <animateTransform attributeName="transform" additive="sum" type="scale" dur="4s" values="1; 2; 1"
-                        repeatCount="indefinite"></animateTransform>
-                </circle>
+                <circle class="circle-path" id="mesenchymal-stem-cell" cx="130" cy="346" r="6" fill="#FFFF00"></circle>
+                <line x1="136" x2="160" y1="346" y2="346" stroke="black"></line>
+                <rect x="160" y="324" width="114" height="44" class="tooltip-rect" id="mesenchymal-stem-cell-tt"></rect>
+                <text x="215" y="340" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Mesenchymal
+                    Stem</text>
+                <text x="215" y="354" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Cell
+                    Model</text>
+                <image class="arrow-gif" x="262" y="350" width="10" height="10" href="assets/arrow.png"></image>
+
                 <!-- cartilage -->
-                <circle class="circle-path" id="cartilage" cx="189" cy="588" r="6" fill="url('#myGradient')">
-                    <animateTransform attributeName="transform" type="translate" dur="4s" values="0,0;-189,-588;0,0"
-                        repeatCount="indefinite"></animateTransform>
-                    <animateTransform attributeName="transform" additive="sum" type="scale" dur="4s" values="1; 2; 1"
-                        repeatCount="indefinite"></animateTransform>
+                <circle class="circle-path" id="cartilage" cx="126" cy="392" r="6" fill="#FFFF00">
                 </circle>
+                <line x1="132" x2="158" y1="392" y2="392" stroke="black"></line>
+                <rect x="158" y="379" width="104" height="26" class="tooltip-rect" id="cartilage-tt">
+                </rect>
+                <text x="204" y="392" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Cartilage
+                    Model</text>
+                <image class="arrow-gif" x="249" y="387" width="10" height="10" href="assets/arrow.png"></image>
+
                 <!-- bone -->
-                <circle class="circle-path" id="bone" cx="201" cy="660" r="6" fill="url('#myGradient')">
-                    <animateTransform attributeName="transform" type="translate" dur="4s" values="0,0;-201,-660;0,0"
-                        repeatCount="indefinite"></animateTransform>
-                    <animateTransform attributeName="transform" additive="sum" type="scale" dur="4s" values="1; 2; 1"
-                        repeatCount="indefinite"></animateTransform>
-                </circle>
+                <circle class="circle-path" id="bone" cx="134" cy="440" r="6" fill="#FFFF00"></circle>
+                <line x1="140" x2="160" y1="440" y2="440" stroke="black"></line>
+                <rect x="160" y="427" width="90" height="26" class="tooltip-rect" id="bone-tt"></rect>
+                <text x="200" y="440" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Bone
+                    Models</text>
+                <image class="arrow-gif" x="238" y="435" width="10" height="10" href="assets/arrow.png"></image>
+
             </svg>
 
         </div>

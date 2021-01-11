@@ -1,3 +1,49 @@
+/* blink arrows */
+@-moz-keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-ms-keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 body,
 * {
   margin: 0;
@@ -6,8 +52,8 @@ body,
 }
 
 .main-container {
-  height: 1020px;
-  width: 413.25px;
+  height: 680px;
+  width: 357.5px;
 }
 
 .img-container {
@@ -28,17 +74,28 @@ body,
   cursor: pointer;
 }
 
-.tooltip {
-  position: absolute;
-  opacity: 0.3;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  border: none;
-  background: #fff;
-  color: black;
-  font-size: small;
-  padding: 5px;
+.tooltip-rect {
   cursor: pointer;
-  pointer-events: none;
+  fill: red;
+}
+
+/* .tooltip-rect:hover{
+  fill: black;
+} */
+
+.tooltip-text {
+  font-size: 12px;
+  cursor: pointer;
+  fill: white;
+}
+
+/* .tooltip-text:hover .tooltip-rect {
+  fill: black;
+} */
+
+.arrow-gif {
+  -moz-animation: blink normal 0.8s infinite; /* Firefox */
+  -webkit-animation: blink normal 0.8s infinite; /* Webkit */
+  -ms-animation: blink normal 0.8s infinite; /* IE */
+  animation: blink normal 0.8s infinite; /* Opera and prob css3 final iteration */
 }
