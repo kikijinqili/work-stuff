@@ -5,12 +5,12 @@ const circles = document.querySelectorAll(".circle-path");
 
 // urls
 const urlsArr = [
-  "https://www.sciencellonline.com/all-inclusive-3d-human-cortical-spheroid-formation-kit.html",
-  "https://www.sciencellonline.com/all-inclusive-3d-human-retinal-pigment-epithelial-spheroid-formation-kit.html",
-  "https://www.sciencellonline.com/3d-all-inclusive-blood-brain-barrier-models",
-  "https://www.sciencellonline.com/3d-all-inclusive-liver-models",
-  "https://www.sciencellonline.com/all-inclusive-3d-chondrocyte-spheroid-formation-kit.html",
-  "https://www.sciencellonline.com/3d-all-inclusive-bone-models",
+  "/all-inclusive-3d-human-cortical-spheroid-formation-kit.html",
+  "/all-inclusive-3d-human-retinal-pigment-epithelial-spheroid-formation-kit.html",
+  "/3d-all-inclusive-blood-brain-barrier-models",
+  "/3d-all-inclusive-liver-models",
+  "/all-inclusive-3d-chondrocyte-spheroid-formation-kit.html",
+  "/3d-all-inclusive-bone-models",
 ];
 
 // add links to circles
