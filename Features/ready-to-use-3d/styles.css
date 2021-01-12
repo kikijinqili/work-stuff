@@ -88,3 +88,10 @@ body,
   cursor: pointer;
   fill: white;
 }
+
+/* .arrow-gif {
+  -moz-animation: blink normal 0.8s infinite;
+  -webkit-animation: blink normal 0.8s infinite;
+  -ms-animation: blink normal 0.8s infinite;
+  animation: blink normal 0.8s infinite; 
+} */

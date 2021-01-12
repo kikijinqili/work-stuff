@@ -5,15 +5,15 @@ const circles = document.querySelectorAll(".circle-path");
 
 // urls
 const urlsArr = [
-  "https://www.sciencellonline.com/ready-to-use-3d-human-cortical-spheroids.html",
-  "https://www.sciencellonline.com/products-services/cell-based-assays/3d-cell-culture/3d-ready-to-use-kits/ocular-model.html",
-  "https://www.sciencellonline.com/3d-ready-to-use-bbb-model",
-  "https://www.sciencellonline.com/3d-ready-to-use-lung-models",
-  "https://www.sciencellonline.com/3d-ready-to-use-liver-models",
-  "https://www.sciencellonline.com/3d-ready-to-use-kidney-models",
-  "https://www.sciencellonline.com/ready-to-use-3d-human-mesenchymal-stem-cell-spheroids.html",
-  "https://www.sciencellonline.com/ready-to-use-3d-chondrocyte-spheroid-kit.html",
-  "https://www.sciencellonline.com/3d-ready-to-use-bone-models",
+  "/ready-to-use-3d-human-cortical-spheroids.html",
+  "/products-services/cell-based-assays/3d-cell-culture/3d-ready-to-use-kits/ocular-model.html",
+  "/3d-ready-to-use-bbb-model",
+  "/3d-ready-to-use-lung-models",
+  "/3d-ready-to-use-liver-models",
+  "/3d-ready-to-use-kidney-models",
+  "/ready-to-use-3d-human-mesenchymal-stem-cell-spheroids.html",
+  "/ready-to-use-3d-chondrocyte-spheroid-kit.html",
+  "/3d-ready-to-use-bone-models",
 ];
 
 // add links to circles
