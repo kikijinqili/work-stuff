@@ -72,6 +72,10 @@ body,
 .circle-path {
   z-index: 100;
   cursor: pointer;
+  -moz-animation: blink normal 0.8s infinite; /* Firefox */
+  -webkit-animation: blink normal 0.8s infinite; /* Webkit */
+  -ms-animation: blink normal 0.8s infinite; /* IE */
+  animation: blink normal 0.8s infinite; /* Opera and prob css3 final iteration */
 }
 
 .tooltip-rect {
@@ -79,23 +83,8 @@ body,
   fill: red;
 }
 
-/* .tooltip-rect:hover{
-  fill: black;
-} */
-
 .tooltip-text {
   font-size: 12px;
   cursor: pointer;
   fill: white;
-}
-
-/* .tooltip-text:hover .tooltip-rect {
-  fill: black;
-} */
-
-.arrow-gif {
-  -moz-animation: blink normal 0.8s infinite; /* Firefox */
-  -webkit-animation: blink normal 0.8s infinite; /* Webkit */
-  -ms-animation: blink normal 0.8s infinite; /* IE */
-  animation: blink normal 0.8s infinite; /* Opera and prob css3 final iteration */
 }
