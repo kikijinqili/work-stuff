@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="custom.css">
+    <title>pop up window</title>
+</head>
+
+<body>
+    <div id="popup">
+        <div class="popup-content">
+            <span class="close">&times;</span>
+            <p class="popup-text">Shipping will be delayed due to Covid-19.</p>
+        </div>
+    </div>
+
+    <script>
+        var modal = document.getElementById("popup");
+        var span = document.getElementsByClassName("close")[0];
+        window.onload = function () {
+            modal.style.display = "block";
+        }
+        span.onclick = function () {
+            modal.style.display = "none";
+            modal.style.zIndex = "999";
+        }
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+
+</html>
