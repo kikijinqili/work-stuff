@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>collagen-based</title>
+</head>
+
+<body>
+    <div class="main-container" id="collagen-based">
+        <div class="img-container">
+
+            <svg viewBox="-280 -60 800 640" preserveAspectRatio="xMinYMin meet">
+
+                <image id="body-img" width="206" height="544" href="/pub/media/human-body-redesign/assets/readyToUseBody.svg"></image>
+
+                <!-- blood-brain-barrier -->
+                <circle class="circle-path" id="blood-brain-barrier" cx="84" cy="18" r="6" fill="#fe0000"></circle>
+                <line x1="38" x2="78" y1="18" y2="18" stroke="black"></line>
+                <rect x="-52" y="-4" width="90" height="44" class="tooltip-rect" id="blood-brain-barrier-tt"></rect>
+                <text x="-2" y="12" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Blood
+                    Brain</text>
+                <text x="-2" y="26" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Barrier
+                    Model</text>
+                <image class="arrow-gif" x="-50" y="13" width="10" height="10"
+                    href="/pub/media/human-body-redesign/assets/arrow0.png"></image>
+
+                <!-- kidney -->
+                <circle class="circle-path" id="kidney" cx="118" cy="212" r="6" fill="#fe0000"></circle>
+                <line x1="124" x2="212" y1="212" y2="212" stroke="black"></line>
+                <rect x="212" y="199" width="90" height="26" class="tooltip-rect" id="kidney-tt"></rect>
+                <text x="252" y="212" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Kidney
+                    Model</text>
+                <image class="arrow-gif" x="290" y="207" width="10" height="10"
+                    href="/pub/media/human-body-redesign/assets/arrow.png"></image>
+
+                <!-- vascular-biology -->
+                <circle class="circle-path" id="vascular-biology" cx="162" cy="184" r="6" fill="#fe0000"></circle>
+                <line x1="168" x2="205" y1="184" y2="184" stroke="black"></line>
+                <rect x="205" y="171" width="145" height="26" class="tooltip-rect" id="vascular-biology-tt"></rect>
+                <text x="272" y="184" dominant-baseline="middle" text-anchor="middle" class="tooltip-text">Vascular
+                    Biology Model</text>
+                <image class="arrow-gif" x="336" y="179" width="10" height="10"
+                    href="/pub/media/human-body-redesign/assets/arrow.png"></image>
+
+            </svg>
+
+        </div>
+    </div>
+
+    <script src="collagen-based.js" type="text/javascript"></script>
+</body>
+
+</html>
