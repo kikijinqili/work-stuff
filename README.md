@@ -7,7 +7,8 @@
 - [x] Human body all-inclusive
 - [x] Reposition human body on 3d-cell-culture pages
 - [ ] Go through old / new websites page by page to find all different parts
-- [ ] Modify stem cells - /features/img-btn/test.html
+- [x] Modify stem cells - /features/img-btn/test.html
+- [ ] 3d cell culture image buttons
 - [ ] Visual sitemaps
 
 <!-- 
