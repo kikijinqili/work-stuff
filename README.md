@@ -8,7 +8,9 @@
 - [x] Reposition human body on 3d-cell-culture pages
 - [ ] Go through old / new websites page by page to find all different parts
 - [x] Modify stem cells - /features/img-btn/test.html
-- [ ] 3d cell culture image buttons
+- [x] 3d cell culture image buttons
+- [ ] full-path breadcrumbs
+- [ ] browse-by layered navigation
 - [ ] Visual sitemaps
 
 <!-- 

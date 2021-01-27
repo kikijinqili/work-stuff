@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        .even:first-of-type {
+            color: red;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <table class="data-table" id="product-attribute-specs-table">
+        <tbody>
+            <tr class="first odd">
+                <th class="label">Catalog No.</th>
+                <td class="data last">OsrHSA</td>
+            </tr>
+            <tr class="even">
+                <th class="label">Country of Manufacture</th>
+                <td class="data last">China</td>
+            </tr>
+            <tr class="odd">
+                <th class="label">Product Code</th>
+                <td class="data last">rHSA</td>
+            </tr>
+            <tr class="even">
+                <th class="label">Size/Quantity</th>
+                <td class="data last">1g</td>
+            </tr>
+            <tr class="odd">
+                <th class="label">Product Use</th>
+                <td class="data last">This product is for research use only. It is not approved for use in humans,
+                    animals,
+                    or in vitro diagnostic procedures.</td>
+            </tr>
+            <tr class="even">
+                <th class="label">Storage</th>
+                <td class="data last">Store at -20°C after receiving. Upon reconstitution, store at 2-8°C for up to one
+                    week. For maximal stability, aliquot and store at -20°C. Avoid repeated freeze/ thaw cycles.</td>
+            </tr>
+            <tr class="odd">
+                <th class="label">Shipping Info</th>
+                <td class="data last">Gel ice.</td>
+            </tr>
+            <tr class="even">
+                <th class="label">Source</th>
+                <td class="data last">Oryza sativa (rice grain)</td>
+            </tr>
+            <tr class="odd">
+                <th class="label">Purity</th>
+                <td class="data last">≥ 99% by SEC-HPLC</td>
+            </tr>
+            <tr class="even">
+                <th class="label">Physical Appearance</th>
+                <td class="data last">Off-White lyophilized powder.</td>
+            </tr>
+            <tr class="odd">
+                <th class="label">Formulation</th>
+                <td class="data last"> Lyophilized with no additives.</td>
+            </tr>
+            <tr class="even">
+                <th class="label">Endotoxin</th>
+                <td class="data last">&lt; 0.005EU/ug</td>
+            </tr>
+            <tr class="last odd">
+                <th class="label">Reconstitution</th>
+                <td class="data last">Reconstitute in sterile distilled water or saline. </td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+        require(['jquery', 'jquery/ui'], function ($) {
+            let addText = $("tr:nth-child(2)").find("td.data");
+            $(document).ready(function () {
+                console.log(addText);
+                addText.text("China, Quality Control in the United States of America");
+            })
+        })
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var script = document.createElement('script');
+            script.onload = function () {
+                console.log("addText");
+            };
+            script.src = "https://kikijinqili.github.io/assets/addText.js";
+            document.body.appendChild(script);
+        });
+
+    </script>
+</body>
+
+</html>
