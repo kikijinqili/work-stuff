@@ -1,3 +1,10 @@
+<!--
+ * @Author: Jinqi Li
+ * @Date: 2021-01-05 08:30:50
+ * @LastEditors: Jinqi Li
+ * @LastEditTime: 2021-02-04 11:11:25
+ * @FilePath: \ScienCell-Frontend\README.md
+-->
 # Back-up of my work
 
 ## TODO
@@ -6,11 +13,12 @@
 - [x] Change to original design
 - [x] Human body all-inclusive
 - [x] Reposition human body on 3d-cell-culture pages
-- [ ] Go through old / new websites page by page to find all different parts
+- [x] Go through old / new websites page by page to find all different parts
 - [x] Modify stem cells - /features/img-btn/test.html
 - [x] 3d cell culture image buttons
 - [ ] full-path breadcrumbs
-- [ ] browse-by layered navigation
+- [x] browse-by layered navigation
+- [x] logos of distributors
 - [ ] Visual sitemaps
 
 <!-- 
