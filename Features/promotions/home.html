@@ -1,0 +1,49 @@
+<!--
+ * @Author: Jinqi Li
+ * @Date: 2021-02-11 13:39:50
+ * @LastEditors: Jinqi Li
+ * @LastEditTime: 2021-02-16 13:13:26
+ * @FilePath: \ScienCell-Frontend\Features\promotions\home.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="jumbotron" style="border-top: 0px;">
+        <div class="container argento-tabs" data-mage-init="{" argentoTabs": {}}">
+            {{widget
+            type="Swissup\Highlight\Block\ProductList\Attribute\Yesno" title="Current Promotions"
+            attribute_code="current_promotion" products_count="8" column_count="4" order="default" dir="asc"
+            template="Swissup_Highlight::product/list.phtml" mode="grid"}}
+
+            {{widget
+            type="Swissup\Highlight\Block\ProductList\Attribute\Yesno" title="New Products" attribute_code="new_product"
+            products_count="8" column_count="4" order="default" dir="asc"
+            template="Swissup_Highlight::product/list.phtml"
+            mode="grid"}}
+
+            {{widget type="Swissup\Highlight\Block\ProductList\Attribute\Yesno" title="Top Products"
+            attribute_code="top_product" products_count="8" column_count="4" order="default" dir="asc"
+            template="Swissup_Highlight::product/list.phtml" mode="grid"}}
+
+
+        </div>
+    </div>
+
+    <!-- deleted covid-19 -->
+    <div class="block-title"><strong>Covid-19 Products</strong></div>
+
+    {{widget type="Swissup\Easycatalogimg\Block\Widget\SubcategoriesList" category_count="5"
+    subcategory_count="5"
+    column_count="5" show_image="1" image_width="400" image_height="400"
+    template="Swissup_Easycatalogimg::list.phtml"}}
+</body>
+
+</html>
