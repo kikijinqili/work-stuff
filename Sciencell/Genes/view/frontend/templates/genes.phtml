@@ -1,0 +1,873 @@
+<style>
+  .grid-container
+  {
+    display: grid;
+    align-content: space-evenly;
+    grid-template-columns: auto auto auto auto auto auto;
+  }
+
+  .grid-container > div 
+  {
+    text-align: center;
+  }
+
+  .tree a:hover
+  {
+    background-color: red;
+    opacity: 10%;
+  }
+
+  .wellplate
+  {
+    margin-top: 30px;
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .wellplate td
+  {
+    padding: 0px;
+  }
+
+  .wellplate input
+  {
+    height: 20px;
+    padding: 0px;
+    text-align: center;
+    font-size:12px;
+    background-color: #D3D3D3;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+
+  .wellplate input[type="text"][disabled]
+  {
+    opacity:100;
+    color:red;
+  }
+
+  .input-button {
+    background-color:transparent;
+    border:none;
+    color:white;
+    font-size:16px;
+    text-transform:uppercase;
+    font-weight:600;
+    font-family:'Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+  }
+</style>
+
+<script type="text/javascript">
+  function do_this(){
+    var checkboxes = document.getElementsByName('check_list[]');
+    var button = document.getElementById('toggle');
+
+    if(button.value == 'select all'){
+        for (var i in checkboxes){
+            checkboxes[i].checked = 'FALSE';
+        }
+        button.value = 'deselect'
+    }else{
+        for (var i in checkboxes){
+            checkboxes[i].checked = '';
+        }
+        button.value = 'select all';
+    }
+  }
+</script>
+
+<?php
+if(isset($_GET['Matrix']))
+{
+  if(isset($_SESSION['plateIndex']))
+  {
+    $indexesToClear = $_SESSION['plateIndex'];
+    for($x = 0; $x <= $indexesToClear; $x++)
+    {
+      $sessionKey = 'Genes' . $x;
+      unset($_SESSION[$sessionKey]);
+    }
+    $_SESSION['plateIndex'] = 0;
+  }
+}
+
+if(isset($_GET['Treelink']))
+{
+  $imagedisplay = $_GET['Treelink'];
+  echo "
+    <div style='margin-top:10px;'>
+  ";
+  if($imagedisplay == 'Cell_Biology')
+  {
+    echo "
+      <p style='text-align:center'>
+        <a href='/genes/index/index'>Main Menu</a> | <a href=''>View All</a> | <a href='?Treelink=Cell_Markers'>Cell Markers</a> | <a href='?Treelink=Cell_Biology'>Cell Biology</a> | <a href='?Treelink=Physiology'>Physiology</a> | <a href='?Treelink=Pathology'>Pathology</a> | <a href='?Treelink=Controls&Category=Controls#Genes'>Controls</a>
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>
+        <img src='/pub/media/images/genes/CB.png' alt='Cell Biology' style='width:100%; height:auto;'>
+        <area shape='rect' coords='452,588,550,711' href='?Treelink=CBM'>
+        <a href='?Treelink=CBM' style='position:absolute;top:81.6666666666667%;left:47.1816283924843%;width:10.2296450939457%;height:17.0833333333333%;cursor:pointer;' title='CBM'></a>
+        <a href='?Treelink=CBTT' style='position:absolute;top:25%;left:73.6951983298539%;width:11.5866388308977%;height:21.5277777777778%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBCCG' style='position:absolute;top:5.83333333333333%;left:31.1064718162839%;width:8.97703549060543%;height:5.69444444444444%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBST' style='position:absolute;top:65.8333333333333%;left:43.5281837160752%;width:9.60334029227557%;height:5.83333333333333%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBMA' style='position:absolute;top:50.8333333333333%;left:51.8789144050104%;width:8.35073068893528%;height:5.97222222222222%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBCCG' style='position:absolute;top:2.91666666666667%;left:45.615866388309%;width:16.0751565762004%;height:10.8333333333333%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBST' style='position:absolute;top:66.1111111111111%;left:62.0041753653445%;width:12.3173277661795%;height:26.1111111111111%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBMA' style='position:absolute;top:48.8888888888889%;left:79.5407098121086%;width:13.0480167014614%;height:22.9166666666667%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBGE' style='position:absolute;top:8.47222222222222%;left:67.1189979123173%;width:12.9436325678497%;height:14.4444444444444%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBM' style='position:absolute;top:83.0555555555556%;left:31.2108559498956%;width:9.2901878914405%;height:3.75%;cursor:pointer;' title='CBM'></a>
+        <a href='?Treelink=CBTT' style='position:absolute;top:35.1388888888889%;left:50.5219206680584%;width:8.55949895615866%;height:8.33333333333333%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBGE' style='position:absolute;top:22.5%;left:44.5720250521921%;width:12.0041753653445%;height:4.16666666666667%;cursor:pointer;' title='CBGE'></a>
+      </div>
+    ";
+  }
+  else if($imagedisplay == 'CBCCG')
+  {
+    echo "
+      <p style='text-align:center'>          
+        <a href='/genes/index/index'>Main Menu</a> | <a href='?Treelink=Cell_Biology'>Cell Biology</a> | <a href='?Treelink=CBCCG'>Cell Cycling and Growth</a> | <a href='?Treelink=CBGE'>Gene Expression</a> | <a href='?Treelink=CBTT'>Transport and Trafficking</a> | <a href='?Treelink=CBMA'>Motility and Adhesion</a> | <a href='?Treelink=CBST'>Signal Transduction</a> | <a href='?Treelink=CBM'>Metabolism</a>
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>
+        <img src='/pub/media/images/genes/CBCCG.png' alt='CBCCG' class='map' usemap='#MapCG' border='0'>
+        <a href='?Treelink=CellBiology' style='position:absolute;top:50.9469696969697%;left:4.17536534446764%;width:6.57620041753653%;height:8.71212121212121%;cursor:pointer;' title='CellBiology'></a>
+        <a href='?Treelink=CBCCG&Category=Meiosis#Genes' style='position:absolute;top:2.46212121212121%;left:80.8977035490605%;width:16.0751565762004%;height:5.11363636363636%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Mitosis#Genes' style='position:absolute;top:7.57575757575758%;left:80.8977035490605%;width:16.0751565762004%;height:5.11363636363636%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=DNA_Replication#Genes' style='position:absolute;top:12.5%;left:80.6889352818372%;width:16.7014613778706%;height:4.92424242424242%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Spindle_Kinetochore_and_Centrosomal_Elements#Genes' style='position:absolute;top:17.4242424242424%;left:80.8977035490605%;width:15.866388308977%;height:7.57575757575758%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=G1/S#Genes' style='position:absolute;top:29.1666666666667%;left:83.1941544885177%;width:11.0647181628392%;height:5.11363636363636%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Intra-S#Genes' style='position:absolute;top:34.6590909090909%;left:83.1941544885177%;width:11.2734864300626%;height:4.73484848484848%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=G2/M#Genes' style='position:absolute;top:39.3939393939394%;left:83.4029227557411%;width:10.9603340292276%;height:4.54545454545455%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Cyclins_and_CDKs#Genes' style='position:absolute;top:43.9393939393939%;left:83.2985386221294%;width:11.2734864300626%;height:5.3030303030303%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Damage_Sensing#Genes' style='position:absolute;top:46.969696969697%;left:58.2463465553236%;width:12.3173277661795%;height:5.87121212121212%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Cell_Cycle_Arrest#Genes' style='position:absolute;top:52.4621212121212%;left:58.5594989561587%;width:12.3173277661795%;height:5.3030303030303%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=DNA_Repair#Genes' style='position:absolute;top:57.5757575757576%;left:58.455114822547%;width:12.4217118997912%;height:4.92424242424242%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Senescence#Genes' style='position:absolute;top:72.9166666666667%;left:58.0375782881002%;width:13.0480167014614%;height:5.87121212121212%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Death_Induction#Genes' style='position:absolute;top:78.7878787878788%;left:58.3507306889353%;width:12.7348643006263%;height:4.54545454545455%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Necrosis#Genes' style='position:absolute;top:83.3333333333333%;left:58.2463465553236%;width:12.6304801670146%;height:4.73484848484848%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Apoptosis#Genes' style='position:absolute;top:88.2575757575758%;left:57.9331941544885%;width:13.1524008350731%;height:4.92424242424242%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Proteolysis#Genes' style='position:absolute;top:93.1818181818182%;left:58.455114822547%;width:12.5260960334029%;height:4.73484848484848%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Division#Genes' style='position:absolute;top:22.3484848484848%;left:58.6638830897704%;width:11.8997912317328%;height:4.73484848484848%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Checkpoint#Genes' style='position:absolute;top:35.6060606060606%;left:58.3507306889353%;width:12.2129436325678%;height:4.73484848484848%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Survival#Genes' style='position:absolute;top:4.92424242424242%;left:58.6638830897704%;width:11.8997912317328%;height:4.73484848484848%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Polarity_and_Size_Regulation#Genes' style='position:absolute;top:10.2272727272727%;left:58.6638830897704%;width:11.7954070981211%;height:7.00757575757576%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=G0/G1_Transition#Genes' style='position:absolute;top:17.8030303030303%;left:58.5594989561587%;width:11.8997912317328%;height:3.97727272727273%;cursor:pointer;' title='CBCCG'></a>
+        <a href='?Treelink=CBCCG&Category=Cytoskeleton_and_Nuclear_Matrix#Genes' style='position:absolute;top:27.4621212121212%;left:58.6638830897704%;width:12.2129436325678%;height:7.95454545454545%;cursor:pointer;' title='CBCCG'></a>
+      </div>
+    ";
+  }
+  else if($imagedisplay == 'CBGE')
+  {
+    echo "
+      <p style='text-align:center'>        
+        <a href='/genes/index/index'>Main Menu</a> | <a href='?Treelink=Cell_Biology'>Cell Biology</a> | <a href='?Treelink=CBCCG'>Cell Cycling and Growth</a> | <a href='?Treelink=CBGE'>Gene Expression</a> | <a href='?Treelink=CBTT'>Transport and Trafficking</a> | <a href='?Treelink=CBMA'>Motility and Adhesion</a> | <a href='?Treelink=CBST'>Signal Transduction</a> | <a href='?Treelink=CBM'>Metabolism</a>
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>   
+        <img src='/pub/media/images/genes/CBGE.png' alt='CBGE' class='map' usemap='#MapGE' border='0'>
+        <a href='?Treelink=CellBiology#Genes' style='position:absolute;top:46.5277777777778%;left:0.939457202505219%;width:6.68058455114822%;height:6.11111111111111%;cursor:pointer;' title='CellBiology'></a>
+        <a href='?Treelink=CBGE&Category=RNA_Helicases#Genes' style='position:absolute;top:1.25%;left:84.8643006263048%;width:13.7787056367432%;height:4.30555555555556%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=RNA_Polymerases_and_Associated_Factors#Genes' style='position:absolute;top:5.41666666666667%;left:84.6555323590814%;width:13.8830897703549%;height:5.41666666666667%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=HLH#Genes' style='position:absolute;top:12.0833333333333%;left:85.1774530271399%;width:12.9436325678497%;height:3.47222222222222%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=bZIP#Genes' style='position:absolute;top:15.2777777777778%;left:84.8643006263048%;width:13.2567849686848%;height:4.02777777777778%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Zinc#Genes' style='position:absolute;top:18.75%;left:85.0730688935282%;width:13.5699373695198%;height:4.16666666666667%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Homeobox#Genes' style='position:absolute;top:22.5%;left:85.0730688935282%;width:12.9436325678497%;height:4.02777777777778%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=ETS#Genes' style='position:absolute;top:26.25%;left:85.2818371607516%;width:12.9436325678497%;height:3.61111111111111%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=E2F#Genes' style='position:absolute;top:30%;left:84.9686847599165%;width:13.6743215031315%;height:3.47222222222222%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=HMG#Genes' style='position:absolute;top:33.1944444444444%;left:85.0730688935282%;width:13.0480167014614%;height:3.88888888888889%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Fox#Genes' style='position:absolute;top:36.8055555555556%;left:85.1774530271399%;width:13.3611691022964%;height:3.88888888888889%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Tbox#Genes' style='position:absolute;top:40.4166666666667%;left:84.9686847599165%;width:13.4655532359081%;height:3.88888888888889%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Runt#Genes' style='position:absolute;top:43.8888888888889%;left:85.0730688935282%;width:13.0480167014614%;height:3.47222222222222%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=MADS#Genes' style='position:absolute;top:46.8055555555556%;left:85.2818371607516%;width:12.839248434238%;height:4.02777777777778%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=RHR#Genes' style='position:absolute;top:50.6944444444444%;left:85.1774530271399%;width:13.0480167014614%;height:3.88888888888889%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Nuclear_Receptors#Genes' style='position:absolute;top:54.3055555555556%;left:85.1774530271399%;width:12.9436325678497%;height:3.75%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Activators#Genes' style='position:absolute;top:57.7777777777778%;left:85.1774530271399%;width:12.9436325678497%;height:4.02777777777778%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Repressors#Genes' style='position:absolute;top:61.3888888888889%;left:85.1774530271399%;width:13.0480167014614%;height:4.16666666666667%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Co-activators#Genes' style='position:absolute;top:65.1388888888889%;left:84.8643006263048%;width:13.2567849686848%;height:3.88888888888889%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Co-repressors#Genes' style='position:absolute;top:68.8888888888889%;left:84.9686847599165%;width:13.3611691022964%;height:3.33333333333333%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Components#Genes' style='position:absolute;top:74.8611111111111%;left:85.0730688935282%;width:13.1524008350731%;height:3.61111111111111%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Chromatin_Remodeling#Genes' style='position:absolute;top:78.3333333333333%;left:85.1774530271399%;width:12.7348643006263%;height:5.97222222222222%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Histone_Acetylases_and_Deacetylases#Genes' style='position:absolute;top:84.3055555555556%;left:85.2818371607516%;width:12.3173277661795%;height:5.55555555555556%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Histone_Methylation#Genes' style='position:absolute;top:90%;left:84.9686847599165%;width:13.2567849686848%;height:6.38888888888889%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=General_Regulation#Genes' style='position:absolute;top:38.1944444444444%;left:52.2964509394572%;width:13.3611691022964%;height:3.88888888888889%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Splicing#Genes' style='position:absolute;top:42.3611111111111%;left:51.8789144050104%;width:13.6743215031315%;height:3.33333333333333%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Regulation#Genes' style='position:absolute;top:51.8055555555556%;left:53.6534446764092%;width:9.18580375782881%;height:3.33333333333333%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Ribosomes#Genes' style='position:absolute;top:55.1388888888889%;left:53.3402922755741%;width:10.0208768267223%;height:4.02777777777778%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Factors#Genes' style='position:absolute;top:58.8888888888889%;left:53.8622129436326%;width:9.49895615866388%;height:4.02777777777778%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Chaperones#Genes' style='position:absolute;top:68.4722222222222%;left:51.2526096033403%;width:14.5093945720251%;height:3.47222222222222%;cursor:pointer;' title='CBGE'></a>
+        <a href='?Treelink=CBGE&Category=Modifying_Enzymes#Genes' style='position:absolute;top:71.8055555555556%;left:51.7745302713987%;width:14.19624217119%;height:4.44444444444444%;cursor:pointer;' title='CBGE'></a>
+      </div>
+    ";
+  }
+  else if($imagedisplay == 'CBTT')
+  {
+    echo "
+      <p style='text-align:center'>        
+        <a href='/genes/index/index'>Main Menu</a> | <a href='?Treelink=Cell_Biology'>Cell Biology</a> | <a href='?Treelink=CBCCG'>Cell Cycling and Growth</a> | <a href='?Treelink=CBGE'>Gene Expression</a> | <a href='?Treelink=CBTT'>Transport and Trafficking</a> | <a href='?Treelink=CBMA'>Motility and Adhesion</a> | <a href='?Treelink=CBST'>Signal Transduction</a> | <a href='?Treelink=CBM'>Metabolism</a>
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>
+        <img src='/pub/media/images/genes/CBTT.png' alt='CBTT' class='map' usemap='#MapTT' border='0'>
+        <a href='?Treelink=CBTT&Category=Vesicular_Formation#Genes' style='position:absolute;top:20.7509881422925%;left:51.2526096033403%;width:16.7014613778706%;height:4.94071146245059%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Carriers_and_Chaperones#Genes' style='position:absolute;top:15.4150197628458%;left:51.0438413361169%;width:16.8058455114823%;height:4.94071146245059%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Scaffolds_and_Adaptors#Genes' style='position:absolute;top:10.2766798418972%;left:51.2526096033403%;width:16.4926931106472%;height:4.54545454545455%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Tethers_and_Docks#Genes' style='position:absolute;top:4.54545454545455%;left:51.1482254697286%;width:16.2839248434238%;height:5.33596837944664%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Receptors#Genes' style='position:absolute;top:0.592885375494071%;left:79.5407098121086%;width:11.8997912317328%;height:5.73122529644269%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Sorting#Genes' style='position:absolute;top:6.12648221343874%;left:79.9582463465553%;width:11.5866388308977%;height:5.73122529644269%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=RAS_Superfamily#Genes' style='position:absolute;top:11.8577075098814%;left:79.6450939457202%;width:12.0041753653445%;height:4.94071146245059%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Transport#Genes' style='position:absolute;top:16.798418972332%;left:79.7494780793319%;width:11.5866388308977%;height:4.94071146245059%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Vesicular_Fusion#Genes' style='position:absolute;top:21.5415019762846%;left:79.8538622129436%;width:11.7954070981211%;height:5.53359683794466%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Phagocytosis_Receptors#Genes' style='position:absolute;top:33.9920948616601%;left:77.6617954070981%;width:15.9707724425887%;height:5.33596837944664%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Regulation#Genes' style='position:absolute;top:39.3280632411067%;left:77.7661795407098%;width:15.866388308977%;height:4.94071146245059%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Superoxide_Production#Genes' style='position:absolute;top:43.8735177865613%;left:77.7661795407098%;width:15.866388308977%;height:5.33596837944664%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=targeting#Genes' style='position:absolute;top:57.3122529644269%;left:78.39248434238%;width:14.5093945720251%;height:4.54545454545455%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=SUMOylation#Genes' style='position:absolute;top:62.0553359683794%;left:78.2881002087683%;width:14.5093945720251%;height:4.94071146245059%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=E1_and_E2_ubiquitin_Ligases#Genes' style='position:absolute;top:66.798418972332%;left:78.4968684759917%;width:14.4050104384134%;height:9.09090909090909%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=E3_Ubiquitin_Ligases#Genes' style='position:absolute;top:75.8893280632411%;left:78.2881002087683%;width:14.7181628392484%;height:4.94071146245059%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Ligand-gated#Genes' style='position:absolute;top:91.897233201581%;left:80.062630480167%;width:11.3778705636743%;height:5.73122529644269%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Voltage-gated#Genes' style='position:absolute;top:87.5494071146245%;left:80.1670146137787%;width:11.2734864300626%;height:4.94071146245059%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Components#Genes' style='position:absolute;top:92.8853754940711%;left:51.5657620041754%;width:16.2839248434238%;height:5.13833992094862%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Dynamics_and_Remodeling#Genes' style='position:absolute;top:87.7470355731225%;left:51.4613778705637%;width:16.1795407098121%;height:4.74308300395257%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=Cell_Biology#Genes' style='position:absolute;top:49.0118577075099%;left:4.48851774530271%;width:7.09812108559499%;height:8.89328063241107%;cursor:pointer;' title='Cell_Biology'></a>
+        <a href='?Treelink=CBTT&Category=Pores#Genes' style='position:absolute;top:62.4505928853755%;left:54.8016701461378%;width:10.3340292275574%;height:5.73122529644269%;cursor:pointer;' title='CBTT'></a>
+        <a href='?Treelink=CBTT&Category=Transporters#Genes' style='position:absolute;top:68.3794466403162%;left:54.8016701461378%;width:10.4384133611691%;height:4.74308300395257%;cursor:pointer;' title='CBTT'></a>
+      </div>
+    ";
+  }
+  else if($imagedisplay == 'CBMA')
+  {
+    echo "
+      <p style='text-align:center'>          
+        <a href='/genes/index/index'>Main Menu</a> | <a href='?Treelink=Cell_Biology'>Cell Biology</a> | <a href='?Treelink=CBCCG'>Cell Cycling and Growth</a> | <a href='?Treelink=CBGE'>Gene Expression</a> | <a href='?Treelink=CBTT'>Transport and Trafficking</a> | <a href='?Treelink=CBMA'>Motility and Adhesion</a> | <a href='?Treelink=CBST'>Signal Transduction</a> | <a href='?Treelink=CBM'>Metabolism</a>
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>
+        <img src='/pub/media/images/genes/CBMA.png' alt='CBMA' class='map' usemap='#MapMA' border='0'>
+        <a href='?Treelink=Cell_Biology' style='position:absolute;top:46.1206896551724%;left:1.35699373695198%;width:6.9937369519833%;height:6.17816091954023%;cursor:pointer;' title='Cell_Biology'></a>
+        <a href='?Treelink=CBMA&Category=Other_ECM_Binding#Genes' style='position:absolute;top:28.1609195402299%;left:50.1043841336117%;width:21.60751565762%;height:3.73563218390805%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Laminin_Binding#Genes' style='position:absolute;top:24.5689655172414%;left:49.7912317327766%;width:22.2338204592902%;height:3.16091954022989%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Receptors_and_Surface_Glycoproteins#Genes' style='position:absolute;top:2.58620689655172%;left:49.8956158663883%;width:22.0250521920668%;height:3.59195402298851%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Scaffolding#Genes' style='position:absolute;top:6.46551724137931%;left:50%;width:21.8162839248434%;height:3.44827586206897%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Focal_Adhesion_Complexes#Genes' style='position:absolute;top:10.2011494252874%;left:49.8956158663883%;width:22.2338204592902%;height:3.44827586206897%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Collagen_Binding#Genes' style='position:absolute;top:13.9367816091954%;left:50.1043841336117%;width:21.8162839248434%;height:3.59195402298851%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Fibrinogen_Binding#Genes' style='position:absolute;top:17.3850574712644%;left:49.8956158663883%;width:22.0250521920668%;height:3.16091954022989%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Fibronectin_Binding#Genes' style='position:absolute;top:20.8333333333333%;left:50.1043841336117%;width:22.0250521920668%;height:3.44827586206897%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Enzymes#Genes' style='position:absolute;top:31.7528735632184%;left:84.446764091858%;width:10.9603340292276%;height:3.73563218390805%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Proteins#Genes' style='position:absolute;top:28.0172413793103%;left:84.5511482254697%;width:10.8559498956159%;height:3.30459770114943%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Classical_Cadherins#Genes' style='position:absolute;top:41.0919540229885%;left:82.4634655532359%;width:14.9269311064718%;height:3.30459770114943%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Proto-_and_Nonclassical_Cadherins#Genes' style='position:absolute;top:44.683908045977%;left:82.3590814196242%;width:15.0313152400835%;height:5.74712643678161%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Other_Related_Elements#Genes' style='position:absolute;top:50.8620689655172%;left:82.3590814196242%;width:15.0313152400835%;height:5.89080459770115%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Structural_Components#Genes' style='position:absolute;top:78.1609195402299%;left:81.419624217119%;width:17.1189979123173%;height:3.59195402298851%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Stability#Genes' style='position:absolute;top:74.7126436781609%;left:81.3152400835073%;width:17.1189979123173%;height:3.30459770114943%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Assembly_and_Disassembly#Genes' style='position:absolute;top:71.264367816092%;left:81.5240083507307%;width:16.8058455114823%;height:3.16091954022989%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Polarity#Genes' style='position:absolute;top:67.3850574712644%;left:81.5240083507307%;width:17.1189979123173%;height:3.59195402298851%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Dynamics_and_Remodeling#Genes' style='position:absolute;top:63.5057471264368%;left:81.7327766179541%;width:16.8058455114823%;height:3.87931034482759%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Dendritic_Spines#Genes' style='position:absolute;top:92.816091954023%;left:84.2379958246347%;width:12.0041753653445%;height:4.31034482758621%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Microvilli#Genes' style='position:absolute;top:89.2241379310345%;left:84.3423799582464%;width:11.3778705636743%;height:3.44827586206897%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Cilia#Genes' style='position:absolute;top:85.3448275862069%;left:84.446764091858%;width:11.2734864300626%;height:3.59195402298851%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Ligands#Genes' style='position:absolute;top:70.1149425287356%;left:53.9665970772443%;width:14.3006263048017%;height:3.87931034482759%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Receptors#Genes' style='position:absolute;top:73.8505747126437%;left:53.8622129436326%;width:14.3006263048017%;height:3.73563218390805%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Matrix_Components#Genes' style='position:absolute;top:36.2068965517241%;left:53.7578288100209%;width:13.0480167014614%;height:3.73563218390805%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Desmosomes#Genes' style='position:absolute;top:61.4942528735632%;left:55.9498956158664%;width:10.125260960334%;height:3.59195402298851%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Tight#Genes' style='position:absolute;top:58.0459770114943%;left:56.0542797494781%;width:9.91649269311065%;height:3.44827586206897%;cursor:pointer;' title='CBMA'></a>
+        <a href='?Treelink=CBMA&Category=Gap#Genes' style='position:absolute;top:50.1436781609195%;left:56.2630480167015%;width:9.49895615866388%;height:4.16666666666667%;cursor:pointer;' title='CBMA'></a>
+      </div>
+    ";
+  }
+  else if($imagedisplay == 'CBST')
+  {
+    echo "
+      <p style='text-align:center'>        
+        <a href='/genes/index/index'>Main Menu</a> | <a href='?Treelink=Cell_Biology'>Cell Biology</a> | <a href='?Treelink=CBCCG'>Cell Cycling and Growth</a> | <a href='?Treelink=CBGE'>Gene Expression</a> | <a href='?Treelink=CBTT'>Transport and Trafficking</a> | <a href='?Treelink=CBMA'>Motility and Adhesion</a> | <a href='?Treelink=CBST'>Signal Transduction</a> | <a href='?Treelink=CBM'>Metabolism</a>
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>
+        <img src='/pub/media/images/genes/CBST.png' alt='CBST' class='map' usemap='#MapST' border='0'>
+        <a href='?Treelink=CBST&Category=Antigens_and_Antibodies#Genes' style='position:absolute;top:4.66101694915254%;left:54.1753653444676%;width:13.7787056367432%;height:3.95480225988701%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Cytokines#Genes' style='position:absolute;top:0.706214689265537%;left:54.384133611691%;width:13.5699373695198%;height:3.95480225988701%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Class_I#Genes' style='position:absolute;top:12.1468926553672%;left:57.098121085595%;width:6.26304801670146%;height:3.95480225988701%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Class_II#Genes' style='position:absolute;top:16.1016949152542%;left:57.4112734864301%;width:5.8455114822547%;height:3.8135593220339%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Antigens#Genes' style='position:absolute;top:7.90960451977401%;left:39.2484342379958%;width:12.5260960334029%;height:3.8135593220339%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Cytokines#Genes' style='position:absolute;top:11.864406779661%;left:39.5615866388309%;width:12.3173277661795%;height:3.67231638418079%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=GProtein-coupled#Genes' style='position:absolute;top:56.7796610169492%;left:38.7265135699374%;width:13.9874739039666%;height:3.95480225988701%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Enzyme-linked#Genes' style='position:absolute;top:52.9661016949153%;left:38.517745302714%;width:14.0918580375783%;height:3.95480225988701%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Ion-linked#Genes' style='position:absolute;top:49.4350282485876%;left:38.9352818371608%;width:13.3611691022964%;height:3.24858757062147%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Pattern_Recognition_Receptors#Genes' style='position:absolute;top:43.6440677966102%;left:38.7265135699374%;width:13.6743215031315%;height:5.7909604519774%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Co-receptors#Genes' style='position:absolute;top:39.5480225988701%;left:38.7265135699374%;width:13.5699373695198%;height:3.95480225988701%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Cytoplasmic_Patteren_Recognition_Receptors#Genes' style='position:absolute;top:72.4576271186441%;left:37.7870563674322%;width:15.553235908142%;height:6.21468926553672%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Second_Messenger_Systems#Genes' style='position:absolute;top:78.5310734463277%;left:37.9958246346555%;width:15.3444676409186%;height:5.64971751412429%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Other#Genes' style='position:absolute;top:34.0395480225989%;left:57.7244258872651%;width:11.1691022964509%;height:3.95480225988701%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Hormones_and_Neuropeptides#Genes' style='position:absolute;top:28.6723163841808%;left:57.8288100208768%;width:10.8559498956159%;height:5.50847457627119%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Other_Growth_Factors#Genes' style='position:absolute;top:21.1864406779661%;left:69.5198329853862%;width:15.4488517745303%;height:4.09604519774011%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Neutrophic_Factors#Genes' style='position:absolute;top:17.5141242937853%;left:69.5198329853862%;width:15.7620041753653%;height:3.95480225988701%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=TGFB_Family#Genes' style='position:absolute;top:14.4067796610169%;left:69.7286012526096%;width:15.3444676409186%;height:3.38983050847458%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=EGF_and_EGF-like#Genes' style='position:absolute;top:10.5932203389831%;left:69.7286012526096%;width:15.0313152400835%;height:3.8135593220339%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=FGF_Family#Genes' style='position:absolute;top:6.92090395480226%;left:69.7286012526096%;width:15.3444676409186%;height:3.24858757062147%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=PDGF_and_VEGF_Families#Genes' style='position:absolute;top:2.96610169491525%;left:69.4154488517745%;width:15.7620041753653%;height:3.8135593220339%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Other_Receptors#Genes' style='position:absolute;top:7.90960451977401%;left:88.2045929018789%;width:11.482254697286%;height:3.67231638418079%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Tyrosine_Kinases#Genes' style='position:absolute;top:4.09604519774011%;left:88.3089770354906%;width:11.1691022964509%;height:3.67231638418079%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Metabotropic#Genes' style='position:absolute;top:26.4124293785311%;left:86.9519832985386%;width:13.1524008350731%;height:3.67231638418079%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Secretin#Genes' style='position:absolute;top:23.0225988700565%;left:86.8475991649269%;width:12.9436325678497%;height:3.38983050847458%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Rhodopsin#Genes' style='position:absolute;top:19.2090395480226%;left:86.9519832985386%;width:13.1524008350731%;height:3.8135593220339%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Frizzled/Smothered#Genes' style='position:absolute;top:15.6779661016949%;left:86.9519832985386%;width:13.1524008350731%;height:3.67231638418079%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Scaffolds#Genes' style='position:absolute;top:53.2485875706215%;left:59.3945720250522%;width:8.45511482254697%;height:3.53107344632768%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Adaptors#Genes' style='position:absolute;top:56.4971751412429%;left:59.2901878914405%;width:8.45511482254697%;height:4.09604519774011%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=GEFs#Genes' style='position:absolute;top:38.5593220338983%;left:73.0688935281837%;width:9.91649269311065%;height:3.53107344632768%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=GAPs#Genes' style='position:absolute;top:42.3728813559322%;left:73.0688935281837%;width:9.81210855949896%;height:4.23728813559322%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=GTPases#Genes' style='position:absolute;top:46.6101694915254%;left:72.964509394572%;width:9.70772442588727%;height:3.24858757062147%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=G_Proteins#Genes' style='position:absolute;top:50.1412429378531%;left:72.964509394572%;width:10.125260960334%;height:3.10734463276836%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Other_Related_Factors#Genes' style='position:absolute;top:53.3898305084746%;left:72.7557411273486%;width:10.4384133611691%;height:5.50847457627119%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Ptdins#Genes' style='position:absolute;top:67.3728813559322%;left:86.0125260960334%;width:14.3006263048017%;height:3.95480225988701%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Glycosyltransferases#Genes' style='position:absolute;top:64.1242937853107%;left:86.3256784968685%;width:14.0918580375783%;height:3.38983050847458%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Other_Kinases#Genes' style='position:absolute;top:60.4519774011299%;left:85.9081419624217%;width:14.5093945720251%;height:3.67231638418079%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=TKL_Kinases#Genes' style='position:absolute;top:56.0734463276836%;left:86.3256784968685%;width:14.19624217119%;height:4.37853107344633%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=AGC_Kinases#Genes' style='position:absolute;top:53.1073446327684%;left:86.1169102296451%;width:14.0918580375783%;height:3.38983050847458%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=CK1_and_CAM_Kinases#Genes' style='position:absolute;top:49.4350282485876%;left:86.1169102296451%;width:14.7181628392484%;height:3.8135593220339%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=CMGC_Kinases#Genes' style='position:absolute;top:45.9039548022599%;left:86.1169102296451%;width:13.9874739039666%;height:3.95480225988701%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Phosphatases#Genes' style='position:absolute;top:42.2316384180791%;left:86.2212943632568%;width:14.0918580375783%;height:3.67231638418079%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Protease_Inhibitors#Genes' style='position:absolute;top:38.7005649717514%;left:86.3256784968685%;width:13.8830897703549%;height:3.8135593220339%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Proteases#Genes' style='position:absolute;top:35.0282485875706%;left:85.9081419624217%;width:14.9269311064718%;height:3.53107344632768%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Downstream_Effectors#Genes' style='position:absolute;top:84.6045197740113%;left:85.1774530271399%;width:14.6137787056367%;height:4.51977401129944%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Regulatory_Elements#Genes' style='position:absolute;top:80.3672316384181%;left:84.9686847599165%;width:14.8225469728601%;height:4.37853107344633%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Ion_Binding#Genes' style='position:absolute;top:77.4011299435028%;left:85.1774530271399%;width:14.5093945720251%;height:3.53107344632768%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Metal_Binding#Genes' style='position:absolute;top:73.1638418079096%;left:85.1774530271399%;width:14.6137787056367%;height:4.51977401129944%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Ligand-gated#Genes' style='position:absolute;top:95.7627118644068%;left:67.0146137787056%;width:15.3444676409186%;height:3.8135593220339%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Voltage-gated#Genes' style='position:absolute;top:92.5141242937853%;left:67.1189979123173%;width:15.1356993736952%;height:3.24858757062147%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Voltage-independent#Genes' style='position:absolute;top:88.135593220339%;left:67.223382045929%;width:14.9269311064718%;height:4.23728813559322%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=CBST&Category=Regulators#Genes' style='position:absolute;top:84.3220338983051%;left:67.0146137787056%;width:15.0313152400835%;height:4.09604519774011%;cursor:pointer;' title='CBST'></a>
+        <a href='?Treelink=Cell_Biology#Genes' style='position:absolute;top:41.8079096045198%;left:0%;width:6.57620041753653%;height:5.93220338983051%;cursor:pointer;' title='Cell_Biology'></a>
+      </div>
+    ";
+  }
+  else if($imagedisplay == 'CBM')
+  {
+    echo "
+      <p style='text-align:center'>        
+        <a href='/genes/index/index'>Main Menu</a> | <a href='?Treelink=Cell_Biology'>Cell Biology</a> | <a href='?Treelink=CBCCG'>Cell Cycling and Growth</a> | <a href='?Treelink=CBGE'>Gene Expression</a> | <a href='?Treelink=CBTT'>Transport and Trafficking</a> | <a href='?Treelink=CBMA'>Motility and Adhesion</a> | <a href='?Treelink=CBST'>Signal Transduction</a> | <a href='?Treelink=CBM'>Metabolism</a>
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>
+        <img src='/pub/media/images/genes/CBM.png' alt='CBM' class='map' usemap='#MapCBM' border='0'>
+        <a href='?Treelink=CBM&Category=Lipids#Genes' style='position:absolute;top:3.16901408450704%;left:66.8058455114823%;width:15.4488517745303%;height:9.85915492957746%;cursor:pointer;' title='CBM'></a>
+        <a href='?Treelink=CBM&Category=Carbohydrates#Genes' style='position:absolute;top:12.3239436619718%;left:67.1189979123173%;width:15.2400835073069%;height:9.50704225352113%;cursor:pointer;' title='CBM'></a>
+        <a href='?Treelink=CBM&Category=Proteins#Genes' style='position:absolute;top:21.830985915493%;left:66.9102296450939%;width:15.2400835073069%;height:9.15492957746479%;cursor:pointer;' title='CBM'></a>
+        <a href='?Treelink=CBM&Category=Nucleic_Acid_Turnover#Genes' style='position:absolute;top:30.2816901408451%;left:67.4321503131524%;width:14.8225469728601%;height:10.9154929577465%;cursor:pointer;' title='CBM'></a>
+        <a href='?Treelink=CBM&Category=Nucleic_Acids#Genes' style='position:absolute;top:85.9154929577465%;left:67.3277661795407%;width:15.2400835073069%;height:9.50704225352113%;cursor:pointer;' title='CBM'></a>
+        <a href='?Treelink=CBM&Category=Proteins/Amino_Acids#Genes' style='position:absolute;top:77.4647887323944%;left:66.9102296450939%;width:15.866388308977%;height:9.50704225352113%;cursor:pointer;' title='CBM'></a>
+        <a href='?Treelink=CBM&Category=Oligosaccharides#Genes' style='position:absolute;top:67.9577464788732%;left:67.4321503131524%;width:14.7181628392484%;height:9.50704225352113%;cursor:pointer;' title='CBM'></a>
+        <a href='?Treelink=CBM&Category=Lipids_and_Fatty_Acids#Genes' style='position:absolute;top:59.1549295774648%;left:67.3277661795407%;width:15.0313152400835%;height:9.50704225352113%;cursor:pointer;' title='CBM'></a>
+        <a href='?Treelink=CBM&Category=Organelles#Genes' style='position:absolute;top:50.7042253521127%;left:67.223382045929%;width:15.1356993736952%;height:9.15492957746479%;cursor:pointer;' title='CBM'></a>
+        <a href='?Treelink=CBM&Category=Redox_and_Free_Radicals#Genes' style='position:absolute;top:40.8450704225352%;left:47.0772442588727%;width:10.3340292275574%;height:14.0845070422535%;cursor:pointer;' title='CBM'></a>
+        <a href='?Treelink=CBM&Category=Autophagy#Genes' style='position:absolute;top:23.2394366197183%;left:47.286012526096%;width:9.70772442588727%;height:8.09859154929578%;cursor:pointer;' title='CBM'></a>
+        <a href='?Treelink=Cell_Biology#Genes' style='position:absolute;top:37.3239436619718%;left:15.7620041753653%;width:7.20250521920668%;height:17.6056338028169%;cursor:pointer;' title='Cell_Biology'></a>
+      </div>
+    ";
+  }
+  else if($imagedisplay == 'Cell_Markers')
+  {
+    echo "
+      <p style='text-align:center'>
+        <a href='/genes/index/index'>Main Menu</a> | <a href=''>View All</a> | <a href='?Treelink=Cell_Markers'>Cell Markers</a> | <a href='?Treelink=Cell_Biology'>Cell Biology</a> | <a href='?Treelink=Physiology>Physiology'>Physiology</a> | <a href='?Treelink=Pathology'>Pathology</a> | <a href='?Treelink=Controls&Category=Controls#Genes'>Controls</a>
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>
+        <img src='/pub/media/images/genes/CellMarkers.png' alt='Cell Markers' class='map' usemap='#Map4' border='0'>
+        <a href='?Treelink=Cell_Markers&Category=Neutrophils#Genes' style='position:absolute;top:2.35507246376812%;left:78.2881002087683%;width:10.3340292275574%;height:5.07246376811594%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=Macrophages#Genes' style='position:absolute;top:7.60869565217391%;left:78.39248434238%;width:10.2296450939457%;height:4.34782608695652%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=Platelets#Genes' style='position:absolute;top:11.9565217391304%;left:78.0793319415449%;width:10.7515657620042%;height:4.71014492753623%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=T_cells#Genes' style='position:absolute;top:22.2826086956522%;left:76.9311064718163%;width:12.9436325678497%;height:4.71014492753623%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=Natural_Killer_Cells#Genes' style='position:absolute;top:26.6304347826087%;left:76.9311064718163%;width:13.0480167014614%;height:5.2536231884058%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=B_cells#Genes' style='position:absolute;top:31.5217391304348%;left:77.035490605428%;width:12.9436325678497%;height:5.07246376811594%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=Microglia#Genes' style='position:absolute;top:46.3768115942029%;left:78.39248434238%;width:10.125260960334%;height:4.52898550724638%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=Astrocytes#Genes' style='position:absolute;top:41.304347826087%;left:78.39248434238%;width:9.81210855949896%;height:5.2536231884058%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=Pericytes#Genes' style='position:absolute;top:59.963768115942%;left:78.2881002087683%;width:10.0208768267223%;height:5.79710144927536%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=Fibroblasts#Genes' style='position:absolute;top:55.4347826086957%;left:78.39248434238%;width:9.81210855949896%;height:5.43478260869565%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=Vascular_Endothelial_Cells#Genes' style='position:absolute;top:64.8550724637681%;left:50.9394572025052%;width:19.5198329853862%;height:5.43478260869565%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=Lymphatic_Endothelial_Cells#Genes' style='position:absolute;top:70.4710144927536%;left:50.9394572025052%;width:19.2066805845511%;height:4.71014492753623%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=Epithelial_Cells#Genes' style='position:absolute;top:92.0289855072464%;left:29.6450939457203%;width:10.7515657620042%;height:4.89130434782609%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=Stem_Cells#Genes' style='position:absolute;top:5.97826086956522%;left:53.7578288100209%;width:13.4655532359081%;height:4.89130434782609%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=Dendritic_Cells#Genes' style='position:absolute;top:10.8695652173913%;left:53.7578288100209%;width:13.3611691022964%;height:4.71014492753623%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=Mesenchymal_Stem_Cells#Genes' style='position:absolute;top:35.1449275362319%;left:51.7745302713987%;width:17.6409185803758%;height:5.07246376811594%;cursor:pointer;' title='Cell_Markers'></a>
+        <a href='?Treelink=Cell_Markers&Category=Neurons#Genes' style='position:absolute;top:44.7463768115942%;left:51.5657620041754%;width:17.8496868475992%;height:5.07246376811594%;cursor:pointer;' title='Cell_Markers'></a>
+      </div>
+    ";
+  }
+  else if($imagedisplay == 'Physiology')
+  {
+    echo "
+      <p style='text-align:center'>        
+        <a href='/genes/index/index'>Main Menu</a> | <a href=''>View All</a> | <a href='?Treelink=Cell_Markers'>Cell Markers</a> | <a href='?Treelink=Cell_Biology'>Cell Biology</a> | <a href='?Treelink=Physiology'>Physiology</a> | <a href='?Treelink=Pathology'>Pathology</a> | <a href='?Treelink=Controls&Category=Controls'>Controls</a>    
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>
+        <img src='/pub/media/images/genes/physiology.png' alt='Physiology' class='map' usemap='#Map3' border='0'>
+        <a href='?Treelink=PPD' style='position:absolute;top:10.8333333333333%;left:31.8371607515658%;width:13.3611691022964%;height:6.38888888888889%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PA' style='position:absolute;top:30.2777777777778%;left:33.5073068893528%;width:10.4384133611691%;height:4.30555555555556%;cursor:pointer;' title='PA'></a>
+        <a href='?Treelink=PN' style='position:absolute;top:46.6666666666667%;left:32.1503131524008%;width:13.2567849686848%;height:4.44444444444444%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=PIR' style='position:absolute;top:60.8333333333333%;left:34.5511482254697%;width:8.45511482254697%;height:6.52777777777778%;cursor:pointer;' title='PIR'></a>
+        <a href='?Treelink=PHM' style='position:absolute;top:80.4166666666667%;left:32.0459290187891%;width:13.6743215031315%;height:6.52777777777778%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=PPD' style='position:absolute;top:2.08333333333333%;left:74.321503131524%;width:13.6743215031315%;height:36.9444444444444%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PA' style='position:absolute;top:32.3611111111111%;left:53.8622129436326%;width:11.482254697286%;height:11.25%;cursor:pointer;' title='PA'></a>
+        <a href='?Treelink=PN' style='position:absolute;top:42.6388888888889%;left:73.4864300626305%;width:15.2400835073069%;height:17.3611111111111%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=PIR' style='position:absolute;top:62.5%;left:70.4592901878914%;width:21.294363256785%;height:21.9444444444444%;cursor:pointer;' title='PIR'></a>
+        <a href='?Treelink=PHM' style='position:absolute;top:81.6666666666667%;left:53.3402922755741%;width:13.1524008350731%;height:15.2777777777778%;cursor:pointer;' title='PHM'></a>
+      </div>
+    ";
+  }
+  else if($imagedisplay == 'PPD')
+  {
+    echo "
+      <p style='text-align:center'>          
+        <a href='/genes/index/index'>Main Menu</a> | <a href='?Treelink=PPD'>Patterning and Differentiation</a> | <a href='?Treelink=PA'>Angiogenesis</a> | <a href='?Treelink=PN'>Neurotransmission</a> | <a href='?Treelink=PIR'>Immune Response</a> | <a href='?Treelink=PHM'>Homeostasis and Metabolism</a>
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>
+        <img src='/pub/media/images/genes/PPD.png' alt='PPD' class='map' usemap='#MapPPD' border='0'>
+        <a href='?Treelink=PPD&Category=Maintenance_of_Pluripotency#Genes' style='position:absolute;top:1.5625%;left:74.9478079331942%;width:16.8058455114823%;height:6.5625%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Gastrulation#Genes' style='position:absolute;top:7.8125%;left:75.0521920668058%;width:16.7014613778706%;height:4.375%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Segmentation#Genes' style='position:absolute;top:12.1875%;left:75.0521920668058%;width:16.8058455114823%;height:4.21875%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Epithelial_to_Mesenchymal_Transition#Genes' style='position:absolute;top:16.40625%;left:75.3653444676409%;width:16.4926931106472%;height:6.40625%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Neurogenesis#Genes' style='position:absolute;top:27.5%;left:75.5741127348643%;width:15.3444676409186%;height:4.375%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Axon_Guidance_and_Neuronal_Migration#Genes' style='position:absolute;top:31.875%;left:75.7828810020877%;width:15.2400835073069%;height:6.71875%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Brain_Development#Genes' style='position:absolute;top:38.4375%;left:76.2004175365344%;width:14.6137787056367%;height:4.0625%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=General_Development#Genes' style='position:absolute;top:42.1875%;left:76.2004175365344%;width:14.5093945720251%;height:4.53125%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Axis_and_Symmetry_Regulation#Genes' style='position:absolute;top:32.8125%;left:44.7807933194154%;width:13.4655532359081%;height:6.40625%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Adipogenesis#Genes' style='position:absolute;top:55.625%;left:44.5720250521921%;width:13.6743215031315%;height:3.90625%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Skeleton_Formation#Genes' style='position:absolute;top:59.53125%;left:44.258872651357%;width:14.0918580375783%;height:3.90625%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=Physiology#Genes' style='position:absolute;top:49.53125%;left:4.48851774530271%;width:9.18580375782881%;height:4.21875%;cursor:pointer;' title='Physiology'></a>
+        <a href='?Treelink=PPD&Category=Sexual_Dimorphisation#Genes' style='position:absolute;top:67.1875%;left:44.8851774530271%;width:13.4655532359081%;height:4.84375%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Cardiovascular_Development#Genes' style='position:absolute;top:50.78125%;left:75.8872651356994%;width:14.9269311064718%;height:6.5625%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Trabeculation_Valve_and_Ventricle_Formation#Genes' style='position:absolute;top:57.1875%;left:75.8872651356994%;width:14.9269311064718%;height:6.875%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Myeloid_Lineage#Genes' style='position:absolute;top:69.0625%;left:75.678496868476%;width:15.4488517745303%;height:4.21875%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Lymphoid_Lineage#Genes' style='position:absolute;top:73.28125%;left:75.7828810020877%;width:15.2400835073069%;height:3.75%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=General_Regulation#Genes' style='position:absolute;top:77.03125%;left:75.8872651356994%;width:15.0313152400835%;height:4.375%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Skeletal#Genes' style='position:absolute;top:86.5625%;left:79.6450939457202%;width:7.30688935281837%;height:3.90625%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Cardiac#Genes' style='position:absolute;top:90%;left:79.8538622129436%;width:7.09812108559499%;height:4.84375%;cursor:pointer;' title='PPD'></a>
+        <a href='?Treelink=PPD&Category=Smooth#Genes' style='position:absolute;top:94.84375%;left:79.7494780793319%;width:7.41127348643006%;height:4.21875%;cursor:pointer;' title='PPD'></a>
+      </div>
+    ";
+  }
+  else if($imagedisplay == 'PA')
+  {
+    echo "
+      <p style='text-align:center'>        
+        <a href='/genes/index/index'>Main Menu</a> | <a href='?Treelink=PPD'>Patterning and Differentiation</a> | <a href='?Treelink=PA'>Angiogenesis</a> | <a href='?Treelink=PN'>Neurotransmission</a> | <a href='?Treelink=PIR'>Immune Response</a> | <a href='?Treelink=PHM'>Homeostasis and Metabolism</a>
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>
+        <img src='/pub/media/images/genes/PA.png' alt='PA' class='map' usemap='#MapPA' border='0'>
+        <a href='?Treelink=PA&Category=Signaling_Ligands#Genes' style='position:absolute;top:2.45098039215686%;left:63.7787056367432%;width:15.7620041753653%;height:6.86274509803922%;cursor:pointer;' title='PA'></a>
+        <a href='?Treelink=PA&Category=Signaling_Receptors#Genes' style='position:absolute;top:9.55882352941176%;left:63.9874739039666%;width:16.3883089770355%;height:6.61764705882353%;cursor:pointer;' title='PA'></a>
+        <a href='?Treelink=PA&Category=Signal_Transduction#Genes' style='position:absolute;top:15.4411764705882%;left:63.7787056367432%;width:16.1795407098121%;height:6.61764705882353%;cursor:pointer;' title='PA'></a>
+        <a href='?Treelink=PA&Category=Hypoxia#Genes' style='position:absolute;top:21.8137254901961%;left:63.7787056367432%;width:16.5970772442589%;height:6.61764705882353%;cursor:pointer;' title='PA'></a>
+        <a href='?Treelink=PA&Category=Vessel_Morphology#Genes' style='position:absolute;top:56.3725490196078%;left:64.9269311064718%;width:13.6743215031315%;height:7.1078431372549%;cursor:pointer;' title='PA'></a>
+        <a href='?Treelink=PA&Category=EC_Migration#Genes' style='position:absolute;top:50.4901960784314%;left:64.9269311064718%;width:13.6743215031315%;height:6.12745098039216%;cursor:pointer;' title='PA'></a>
+        <a href='?Treelink=PA&Category=EC_proliferation#Genes' style='position:absolute;top:44.1176470588235%;left:64.8225469728601%;width:13.9874739039666%;height:6.37254901960784%;cursor:pointer;' title='PA'></a>
+        <a href='?Treelink=PA&Category=BM_Degradation#Genes' style='position:absolute;top:38.2352941176471%;left:64.8225469728601%;width:13.9874739039666%;height:6.12745098039216%;cursor:pointer;' title='PA'></a>
+        <a href='?Treelink=PA&Category=Mural_Cell_Recruitment#Genes' style='position:absolute;top:86.7647058823529%;left:66.9102296450939%;width:10.6471816283925%;height:10.5392156862745%;cursor:pointer;' title='PA'></a>
+        <a href='?Treelink=PA&Category=Permeability#Genes' style='position:absolute;top:80.3921568627451%;left:67.0146137787056%;width:10.4384133611691%;height:6.37254901960784%;cursor:pointer;' title='PA'></a>
+        <a href='?Treelink=PA&Category=Vessel_Tone#Genes' style='position:absolute;top:73.7745098039216%;left:66.9102296450939%;width:10.4384133611691%;height:6.12745098039216%;cursor:pointer;' title='PA'></a>
+        <a href='?Treelink=Physiology#Genes' style='position:absolute;top:44.8529411764706%;left:11.0647181628392%;width:9.08141962421712%;height:6.86274509803922%;cursor:pointer;' title='Physiology'></a>
+      </div>
+    ";
+  }
+  else if($imagedisplay == 'PN')
+  {
+    echo "
+      <p style='text-align:center'>      
+        <a href='/genes/index/index'>Main Menu</a> | <a href='?Treelink=PPD'>Patterning and Differentiation</a> | <a href='?Treelink=PA'>Angiogenesis</a> | <a href='?Treelink=PN'>Neurotransmission</a> | <a href='?Treelink=PIR'>Immune Response</a> | <a href='?Treelink=PHM'>Homeostasis and Metabolism</a>
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>
+        <img src='/pub/media/images/genes/PN.png' alt='PN' class='map' usemap='#MapPN' border='0'>
+        <a href='?Treelink=PN&Category=Synthesis_and_Storage#Genes' style='position:absolute;top:2.09424083769634%;left:75.8872651356994%;width:13.8830897703549%;height:6.80628272251309%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=PN&Category=Potentiation#Genes' style='position:absolute;top:8.63874345549738%;left:75.9916492693111%;width:13.2567849686848%;height:7.59162303664921%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=PN&Category=Release#Genes' style='position:absolute;top:15.9685863874346%;left:75.5741127348643%;width:13.7787056367432%;height:6.80628272251309%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=PN&Category=Synaptic_Assembly#Genes' style='position:absolute;top:22.5130890052356%;left:75.8872651356994%;width:13.5699373695198%;height:7.59162303664921%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=PN&Category=Regulation#Genes' style='position:absolute;top:35.8638743455497%;left:75.7828810020877%;width:13.5699373695198%;height:7.06806282722513%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=PN&Category=Vesicle_Endocytosis#Genes' style='position:absolute;top:42.9319371727749%;left:75.8872651356994%;width:13.5699373695198%;height:7.06806282722513%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=PN&Category=Morphology#Genes' style='position:absolute;top:50%;left:75.7828810020877%;width:13.6743215031315%;height:7.06806282722513%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=PN&Category=GABA#Genes' style='position:absolute;top:63.0890052356021%;left:76.6179540709812%;width:11.3778705636743%;height:7.06806282722513%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=PN&Category=Glutamate#Genes' style='position:absolute;top:70.1570680628272%;left:76.4091858037578%;width:11.5866388308977%;height:7.06806282722513%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=PN&Category=Serotonin#Genes' style='position:absolute;top:77.4869109947644%;left:76.5135699373695%;width:11.482254697286%;height:6.282722513089%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=PN&Category=Catecholamine#Genes' style='position:absolute;top:83.2460732984293%;left:76.6179540709812%;width:11.2734864300626%;height:7.06806282722513%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=PN&Category=Acetylcholine#Genes' style='position:absolute;top:90.3141361256545%;left:76.4091858037578%;width:11.7954070981211%;height:7.32984293193717%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=PN&Category=Deactivation#Genes' style='position:absolute;top:63.6125654450262%;left:48.9561586638831%;width:14.3006263048017%;height:6.80628272251309%;cursor:pointer;' title='PN'></a>
+        <a href='?Treelink=Physiology#Genes' style='position:absolute;top:50.7853403141361%;left:11.1691022964509%;width:9.08141962421712%;height:7.32984293193717%;cursor:pointer;' title='Physiology'></a>
+      </div>
+    ";
+  }
+  else if($imagedisplay == 'PIR')
+  {
+    echo "
+      <p style='text-align:center'>        
+        <a href='/genes/index/index'>Main Menu</a> | <a href='?Treelink=PPD'>Patterning and Differentiation</a> | <a href='?Treelink=PA'>Angiogenesis</a> | <a href='?Treelink=PN'>Neurotransmission</a> | <a href='?Treelink=PIR'>Immune Response</a> | <a href='?Treelink=PHM'>Homeostasis and Metabolism</a>
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>
+        <img src='/pub/media/images/genes/PIR.png' alt='PIR' class='map' usemap='#MapPIR' border='0'>
+        <a href='?Treelink=PIR&Category=Antigens#Genes' style='position:absolute;top:6.81818181818182%;left:71.294363256785%;width:19.4154488517745%;height:14.7727272727273%;cursor:pointer;' title='PIR'></a>
+        <a href='?Treelink=PIR&Category=Cytokines#Genes' style='position:absolute;top:21.5909090909091%;left:71.294363256785%;width:19.2066805845511%;height:14.2045454545455%;cursor:pointer;' title='PIR'></a>
+        <a href='?Treelink=PIR&Category=Antigen_Presentation#Genes' style='position:absolute;top:35.2272727272727%;left:71.294363256785%;width:19.5198329853862%;height:14.7727272727273%;cursor:pointer;' title='PIR'></a>
+        <a href='?Treelink=PIR&Category=Receptors_and_Co-receptors#Genes' style='position:absolute;top:50%;left:71.294363256785%;width:19.4154488517745%;height:15.3409090909091%;cursor:pointer;' title='PIR'></a>
+        <a href='?Treelink=PIR&Category=PRRs#Genes' style='position:absolute;top:64.7727272727273%;left:71.1899791231733%;width:19.5198329853862%;height:14.2045454545455%;cursor:pointer;' title='PIR'></a>
+        <a href='?Treelink=PIR&Category=Transduction#Genes' style='position:absolute;top:78.9772727272727%;left:71.294363256785%;width:19.7286012526096%;height:15.3409090909091%;cursor:pointer;' title='PIR'></a>
+        <a href='?Treelink=PIR&Category=T-_and_B-Cell_Activation#Genes' style='position:absolute;top:21.0227272727273%;left:42.5887265135699%;width:20.4592901878914%;height:13.6363636363636%;cursor:pointer;' title='PIR'></a>
+        <a href='?Treelink=PIR&Category=Immune_Cell_Localization#Genes' style='position:absolute;top:33.5227272727273%;left:42.4843423799582%;width:20.4592901878914%;height:16.4772727272727%;cursor:pointer;' title='PIR'></a>
+        <a href='?Treelink=PIR&Category=Trans-endothelial_Migration#Genes' style='position:absolute;top:50%;left:42.4843423799582%;width:20.8768267223382%;height:14.7727272727273%;cursor:pointer;' title='PIR'></a>
+        <a href='?Treelink=PIR&Category=Wound_Healing_and_Coagulation#Genes' style='position:absolute;top:61.9318181818182%;left:42.3799582463466%;width:20.7724425887265%;height:17.6136363636364%;cursor:pointer;' title='PIR'></a>
+        <a href='?Treelink=PIR&Category=Inflammation#Genes' style='position:absolute;top:78.9772727272727%;left:42.2755741127349%;width:21.1899791231733%;height:16.4772727272727%;cursor:pointer;' title='PIR'></a>
+        <a href='?Treelink=Physiology#Genes' style='position:absolute;top:41.4772727272727%;left:7.93319415448852%;width:8.97703549060543%;height:14.2045454545455%;cursor:pointer;' title='Physiology'></a>
+      </div>
+    ";
+  }
+  else if($imagedisplay == 'PHM')
+  {
+    echo "
+      <p style='text-align:center'>      
+        <a href='/genes/index/index'>Main Menu</a> | <a href='?Treelink=PPD'>Patterning and Differentiation</a> | <a href='?Treelink=PA'>Angiogenesis</a> | <a href='?Treelink=PN'>Neurotransmission</a> | <a href='?Treelink=PIR'>Immune Response</a> | <a href='?Treelink=PHM'>Homeostasis and Metabolism</a>
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>
+        <img src='/pub/media/images/genes/PHM.png' alt='PHM' class='map' usemap='#MapPHM' border='0'>
+        <a href='?Treelink=PHM&Category=Insulin_and_Sugars#Genes' style='position:absolute;top:2.30414746543779%;left:76.0960334029228%;width:14.19624217119%;height:5.99078341013825%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=PHM&Category=Fats#Genes' style='position:absolute;top:7.6036866359447%;left:75.8872651356994%;width:14.3006263048017%;height:6.22119815668203%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=PHM&Category=pH_Ions_and_Metals#Genes' style='position:absolute;top:14.0552995391705%;left:75.9916492693111%;width:14.19624217119%;height:6.22119815668203%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=PHM&Category=Pressure_and_Volume#Genes' style='position:absolute;top:19.815668202765%;left:75.9916492693111%;width:14.19624217119%;height:6.22119815668203%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=PHM&Category=Hemostasis#Genes' style='position:absolute;top:26.2672811059908%;left:76.0960334029228%;width:13.9874739039666%;height:6.68202764976959%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=PHM&Category=Oxidative_Stress#Genes' style='position:absolute;top:36.8663594470046%;left:75.4697286012526%;width:14.6137787056367%;height:5.99078341013825%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=PHM&Category=Proteins_and_Nutrients#Genes' style='position:absolute;top:43.0875576036866%;left:75.5741127348643%;width:14.8225469728601%;height:5.52995391705069%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=PHM&Category=Drugs_and_Toxins#Genes' style='position:absolute;top:48.6175115207373%;left:75.678496868476%;width:14.7181628392484%;height:6.45161290322581%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=PHM&Category=Respiration#Genes' style='position:absolute;top:59.6774193548387%;left:77.035490605428%;width:12.7348643006263%;height:6.68202764976959%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=PHM&Category=Bone_Homeostasis#Genes' style='position:absolute;top:66.3594470046083%;left:76.5135699373695%;width:13.0480167014614%;height:5.99078341013825%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=PHM&Category=Tissue_Repair_and_Maintenance#Genes' style='position:absolute;top:71.6589861751152%;left:76.7223382045929%;width:12.5260960334029%;height:9.90783410138249%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=PHM&Category=Muscle_Tone_and_Maintenance#Genes' style='position:absolute;top:81.5668202764977%;left:76.7223382045929%;width:12.6304801670146%;height:9.21658986175115%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=PHM&Category=Thermoregulation#Genes' style='position:absolute;top:90.7834101382488%;left:76.4091858037578%;width:13.1524008350731%;height:5.99078341013825%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=PHM&Category=Circadian_Rhythm#Genes' style='position:absolute;top:54.6082949308756%;left:46.6597077244259%;width:12.5260960334029%;height:6.45161290322581%;cursor:pointer;' title='PHM'></a>
+        <a href='?Treelink=Physiology#Genes' style='position:absolute;top:45.3917050691244%;left:6.88935281837161%;width:9.08141962421712%;height:6.91244239631336%;cursor:pointer;' title='Physiology'></a>
+      </div>
+    ";
+  }
+  else if($imagedisplay == 'Pathology')
+  {
+    echo "
+      <p style='text-align:center'>        
+        <a href='/genes/index/index'>Main Menu</a> | <a href=''>View All</a> | <a href='?Treelink=Cell_Markers'>Cell Markers</a> | <a href='?Treelink=Cell_Biology'>Cell Biology</a> | <a href='?Treelink=Physiology'>Physiology</a> | <a href='?Treelink=Pathology'>Pathology</a> | <a href='?Treelink=Controls&Category=Controls'>Controls</a>      
+      </p>
+      <p style='text-align:center;'><strong>Please select a category to view corresponding genes</strong></p>
+      <div class='tree' style='position:relative; max-width:958px; margin-right:auto; margin-left:auto;'>
+        <img src='/pub/media/images/genes/pathology.png' alt='Pathology' class='map' usemap='#MapPHY' border='0'>
+        <a href='?Treelink=Pathology&Category=Invasion_and_Metastasis#Genes' style='position:absolute;top:13.6111111111111%;left:56.8893528183716%;width:14.5093945720251%;height:3.61111111111111%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Tumor_Angiogenesis#Genes' style='position:absolute;top:10%;left:56.9937369519833%;width:14.9269311064718%;height:3.61111111111111%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Oncogenes#Genes' style='position:absolute;top:6.11111111111111%;left:56.8893528183716%;width:14.5093945720251%;height:4.02777777777778%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Tumor_Suppressor_Genes#Genes' style='position:absolute;top:0.694444444444444%;left:57.098121085595%;width:14.3006263048017%;height:5.27777777777778%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Glioma#Genes' style='position:absolute;top:7.77777777777778%;left:76.2004175365344%;width:10.3340292275574%;height:3.47222222222222%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Meningioma#Genes' style='position:absolute;top:10.9722222222222%;left:76.0960334029228%;width:10.4384133611691%;height:3.88888888888889%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Astrocytoma#Genes' style='position:absolute;top:15%;left:75.9916492693111%;width:10.3340292275574%;height:3.47222222222222%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Prostate_Cancer#Genes' style='position:absolute;top:21.1111111111111%;left:57.098121085595%;width:14.5093945720251%;height:3.75%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Breast_Cancer#Genes' style='position:absolute;top:25%;left:56.8893528183716%;width:14.9269311064718%;height:3.33333333333333%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Myocardial_Infarction#Genes' style='position:absolute;top:28.6111111111111%;left:36.3256784968685%;width:16.2839248434238%;height:3.75%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Myopathy#Genes' style='position:absolute;top:25.1388888888889%;left:36.4300626304802%;width:16.2839248434238%;height:3.75%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Pulmonary_Hypertension#Genes' style='position:absolute;top:31.9444444444444%;left:80.4801670146138%;width:16.2839248434238%;height:4.16666666666667%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Ischemia#Genes' style='position:absolute;top:33.0555555555556%;left:54.6972860125261%;width:16.9102296450939%;height:3.33333333333333%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Peripheral_Vasculature#Genes' style='position:absolute;top:36.3888888888889%;left:54.4885177453027%;width:17.223382045929%;height:3.33333333333333%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Coronary_Artery#Genes' style='position:absolute;top:42.9166666666667%;left:80.4801670146138%;width:16.2839248434238%;height:3.61111111111111%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Atherosclerosis#Genes' style='position:absolute;top:39.1666666666667%;left:80.6889352818372%;width:16.0751565762004%;height:3.61111111111111%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Arteriosclerosis#Genes' style='position:absolute;top:36.1111111111111%;left:80.6889352818372%;width:15.866388308977%;height:3.05555555555556%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Cerebrovasculature#Genes' style='position:absolute;top:43.1944444444444%;left:54.6972860125261%;width:17.3277661795407%;height:3.61111111111111%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Type_I#Genes' style='position:absolute;top:49.7222222222222%;left:67.9540709812109%;width:11.8997912317328%;height:3.88888888888889%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Type_II#Genes' style='position:absolute;top:53.6111111111111%;left:67.5365344467641%;width:12.0041753653445%;height:3.47222222222222%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Microvascular#Genes' style='position:absolute;top:50.6944444444444%;left:86.0125260960334%;width:11.7954070981211%;height:3.47222222222222%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Retinopathy#Genes' style='position:absolute;top:54.3055555555556%;left:85.9081419624217%;width:11.7954070981211%;height:3.75%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Neuropathy#Genes' style='position:absolute;top:57.7777777777778%;left:86.0125260960334%;width:12.3173277661795%;height:4.16666666666667%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Psoriasis#Genes' style='position:absolute;top:65.5555555555556%;left:85.6993736951983%;width:12.7348643006263%;height:3.19444444444444%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Atopic_Dermatitis#Genes' style='position:absolute;top:68.75%;left:85.80375782881%;width:12.839248434238%;height:3.75%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Asthma#Genes' style='position:absolute;top:67.6388888888889%;left:68.8935281837161%;width:11.3778705636743%;height:3.61111111111111%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Psoriatic#Genes' style='position:absolute;top:74.0277777777778%;left:85.6993736951983%;width:12.839248434238%;height:4.16666666666667%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Rheumatoid#Genes' style='position:absolute;top:78.3333333333333%;left:85.5949895615866%;width:13.0480167014614%;height:4.02777777777778%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Lupus#Genes' style='position:absolute;top:60.5555555555556%;left:48.643006263048%;width:11.1691022964509%;height:3.75%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Allergies#Genes' style='position:absolute;top:69.8611111111111%;left:48.5386221294363%;width:11.1691022964509%;height:3.88888888888889%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Huntingtons#Genes' style='position:absolute;top:89.7222222222222%;left:57.4112734864301%;width:12.5260960334029%;height:3.75%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Amyotrophic_Lateral_Sclerosis#Genes' style='position:absolute;top:84.0277777777778%;left:57.4112734864301%;width:12.4217118997912%;height:5.55555555555556%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Parkinsons#Genes' style='position:absolute;top:80.5555555555556%;left:57.3068893528184%;width:12.4217118997912%;height:3.61111111111111%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Alzheimers#Genes' style='position:absolute;top:76.9444444444444%;left:57.4112734864301%;width:12.5260960334029%;height:3.61111111111111%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Autism_Spectrum#Genes' style='position:absolute;top:94.7222222222222%;left:36.0125260960334%;width:13.4655532359081%;height:3.75%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Schizophrenia#Genes' style='position:absolute;top:90.9722222222222%;left:36.1169102296451%;width:13.1524008350731%;height:3.75%;cursor:pointer;' title='Pathology'></a>
+        <a href='?Treelink=Pathology&Category=Bipolar_Disorder#Genes' style='position:absolute;top:87.3611111111111%;left:36.2212943632568%;width:13.0480167014614%;height:3.88888888888889%;cursor:pointer;' title='Pathology'></a>
+      </div>
+      ";
+  }
+  else if($imagedisplay == 'Controls')
+  {
+    echo "
+      <p style='text-align:center'>
+        <a href='/genes/index/index'>Main Menu</a> | <a href=''>View All</a> | <a href='?Treelink=Cell_Markers'>Cell Markers</a> | <a href='?Treelink=Cell_Biology'>Cell Biology</a> | <a href='?Treelink=Physiology'>Physiology</a> | <a href='?Treelink=Pathology'>Pathology</a> | <a href='?Treelink=Controls&Category=Controls'>Controls</a>
+      </p>
+      <p><strong>ScienCell recommends using at least 4 controls:</strong></p>
+      <ul>
+        <li>1 internal control to normalize your data (e.g. β-actin, GAPDH, LDHA, NONO, and PPIH)</li>
+        <li>1 DNA quality control to detect genomic DNA contamination in your cDNA samples (e.g. GDC, a primer set that targets a non-transcribed region of the genome</li>
+        <li>1 positive control (ScienCell offers PPC, which is pre-dispensed synthetic DNA sequence not present in the human genome with a primer pair that can amplify it)</li>
+        <li>1 negative control (a well with qPCR primers in which you add all reagents except the template DNA</li>
+      </ul>
+    ";
+  }
+  echo "
+    </div>
+  ";
+}
+else
+{
+  echo "
+    <div class='row text-pop'>
+      <div class='category-image'>
+        <img src='/pub/media/catalog/category/genes.jpg' alt='genes' class='image'>
+      </div>
+      <p style='text-align:center'><strong>View genes organized by</strong></p>
+      <div class='grid-container'>
+        <div><a href='?Treelink=Cell_Markers'><img src='/pub/media/images/genes/CMicon.png' width='130' height='162' alt='Cell Markers'></a></div>
+        <div><a href='?Treelink=Cell_Biology'><img src='/pub/media/images/genes/CBicon.png' width='130' height='162' alt='Cell Biology'></a></div>
+        <div><a href='?Treelink=Physiology'><img src='/pub/media/images/genes/Picon.png' width='130' height='162' alt='Physiology'></a></div>
+        <div><a href='?Treelink=Pathology'><img src='/pub/media/images/genes/PAicon.png' width='130' height='162' alt='Pathology'></a></div>
+        <div><a href='?Treelink=Controls&amp;Category=Controls'><img src='/pub/media/images/genes/controls.png' width='130' height='162' alt='controls'></a></div>
+        <div><a href=''><img src='/pub/media/images/genes/atoz.png' width='130' height='162' alt='A to Z'></a></div>
+      </div>
+      <div class='sciencell-col-12 category-text'>
+        <p>The default product layout is a 96-well plate but you can elect to receive your primers in 8-tube PCR strips or individual tubes on the reviewing page. Default primer quantities are 1 reaction/well for 96-well plates and 100 reactions/tube for 8-tube strips and individual tubes. You can request to change the quantity in the Additional Comments or Requests section of the reviewing page and include any other requests or requirements before submitting for a quote.</p>
+        <p>To include replicates, just add the gene to your array multiple times.  Once you’ve finished building your qPCR array, edit the plate layout using simple copy (ctrl+c) or cut (ctrl+v) and paste (ctrl+v) commands on the Review and Order page to have your genes where you want them.</p>
+      </div>
+    </div>
+  ";
+}
+
+if(isset($_POST['check_list']))
+{
+  $sessionGenes = $_POST['check_list'];
+  if(!isset($_SESSION['plateIndex']))
+  {
+    $index = 0;
+  }
+  else
+  {
+    $index = $_SESSION['plateIndex'];
+  }
+  foreach($sessionGenes as $key => $value)
+  {
+    $sessionKey = 'Genes' . $index;
+    $_SESSION[$sessionKey] = $value;
+    $index = $index + 1;
+  }
+  $_SESSION['plateIndex'] = $index;
+}
+
+if(isset($_GET['Category']))
+{
+  $Category = $_GET['Category'];
+  $Category1 = str_replace('_', " ",$Category);
+  /*
+  echo "<h1 style='color:#FF0000;text-align:center;margin-bottom:0px;'>" . $Category1 . "</h1>
+        <p style='text-align:center;margin-top:10px;'>Select individual genes or <button onclick='do_this()' id=toggle'>Select All</button></p>";
+  */
+  $mysqli = new mysqli("localhost", "poweruserdb", "Manoj1234", "poweruserdb");
+  if($mysqli->connect_errno){
+ 	  printf("Connect failed: %s\n", $mysqli->connect_error);
+ 	  exit();
+  }
+
+  if ($result = $mysqli->query("SELECT * FROM Genes WHERE Tier5 = '$Category'"))
+  {
+?>
+
+  <div class="genes">
+<?php
+    echo "<form name='IndividualGene' method='post' enctype='multipart/form-data' action='/genes/index/index?Treelink=" . $imagedisplay . "&Category=" . $Category . "#Genes'>";
+?>    
+  	  <table width="100%" style="background-color:white;">
+  	  	<tbody>
+<?php
+    $i = 0;
+    while($Generesults = $result -> fetch_array(MYSQLI_ASSOC))
+    {
+  	  if($i<1) 
+  	  {
+  	  	echo "<tr>";
+  	  }
+?>
+		    <td align="left"><input type="checkbox" name="check_list[]" value="<?php echo $Generesults['Gene'];?>">
+		    <?php echo $Generesults['Gene']; ?>
+<?php
+  	  $i++;
+  	  if($i==6)
+  	  {
+  		  echo "</tr>";
+  		  $i=0;
+  	  }
+  	}
+	  $result->free_result();
+    $mysqli->close();
+  }
+?>
+  	  	</tbody>
+  	  </table>
+      <div style="text-align:center;margin-top:10px;">
+        <button class="category-button">
+          <input type="submit" name="Submit" value="Add genes to array" class="input-button">
+        </button>
+      </div>
+  	</form>
+    <div style="text-align:center;">
+      <a href="/genes/index/index?Matrix=clear" title="Clear Array">
+        <button class="category-button">Clear Array</button>
+      </a>
+    </div>
+  </div>
+<?php
+}
+?>
+<div class="wellplate">
+  <form name="customizegenequeryform" method="post" enctype="multipart/form-data" action="/genes-quote">
+    <table id="Array">
+      <tbody>
+        <tr>
+          <td>&nbsp;</td>
+          <td><p style="text-align:center;"><strong>1</strong></p></td>
+          <td><p style="text-align:center;"><strong>2</strong></p></td>
+          <td><p style="text-align:center;"><strong>3</strong></p></td>
+          <td><p style="text-align:center;"><strong>4</strong></p></td>
+          <td><p style="text-align:center;"><strong>5</strong></p></td>
+          <td><p style="text-align:center;"><strong>6</strong></p></td>
+          <td><p style="text-align:center;"><strong>7</strong></p></td>
+          <td><p style="text-align:center;"><strong>8</strong></p></td>
+          <td><p style="text-align:center;"><strong>9</strong></p></td>
+          <td><p style="text-align:center;"><strong>10</strong></p></td>
+          <td><p style="text-align:center;"><strong>11</strong></p></td>
+          <td><p style="text-align:center;"><strong>12</strong></p></td>
+        </tr>
+        <tr>
+          <td style="width:30px;"><p style="text-align:center;"><strong>A</strong></p></td>
+          <td><input disabled type="text" name="A1" id="A1" maxlength="7" value="<?php if(isset($_SESSION["Genes0"])) echo $_SESSION["Genes0"]; ?>"></td>
+          <td><input disabled type="text" name="A2" id="A2" maxlength="7" value="<?php if(isset($_SESSION["Genes1"])) echo $_SESSION["Genes1"]; ?>"></td>
+          <td><input disabled type="text" name="A3" id="A3" maxlength="7" value="<?php if(isset($_SESSION["Genes2"])) echo $_SESSION["Genes2"]; ?>"></td>
+          <td><input disabled type="text" name="A4" id="A4" maxlength="7" value="<?php if(isset($_SESSION["Genes3"])) echo $_SESSION["Genes3"]; ?>"></td>
+          <td><input disabled type="text" name="A5" id="A5" maxlength="7" value="<?php if(isset($_SESSION["Genes4"])) echo $_SESSION["Genes4"]; ?>"></td>
+          <td><input disabled type="text" name="A6" id="A6" maxlength="7" value="<?php if(isset($_SESSION["Genes5"])) echo $_SESSION["Genes5"]; ?>"></td>
+          <td><input disabled type="text" name="A7" id="A7" maxlength="7" value="<?php if(isset($_SESSION["Genes6"])) echo $_SESSION["Genes6"]; ?>"></td>
+          <td><input disabled type="text" name="A8" id="A8" maxlength="7" value="<?php if(isset($_SESSION["Genes7"])) echo $_SESSION["Genes7"]; ?>"></td>
+          <td><input disabled type="text" name="A9" id="A9" maxlength="7" value="<?php if(isset($_SESSION["Genes8"])) echo $_SESSION["Genes8"]; ?>"></td>
+          <td><input disabled type="text" name="A10" id="A10" maxlength="7" value="<?php if(isset($_SESSION["Genes9"])) echo $_SESSION["Genes9"]; ?>"></td>
+          <td><input disabled type="text" name="A11" id="A11" maxlength="7" value="<?php if(isset($_SESSION["Genes10"])) echo $_SESSION["Genes10"]; ?>"></td>
+          <td><input disabled type="text" name="A12" id="A12" maxlength="7" value="<?php if(isset($_SESSION["Genes11"])) echo $_SESSION["Genes11"]; ?>"></td>
+        </tr>
+        <tr>
+          <td><p style="text-align:center;"><strong>B</strong></p></td>
+          <td><input disabled type="text" name="A13" id="A13" maxlength="7" value="<?php if(isset($_SESSION["Genes12"])) echo $_SESSION["Genes12"]; ?>"></td>
+          <td><input disabled type="text" name="A14" id="A14" maxlength="7" value="<?php if(isset($_SESSION["Genes13"])) echo $_SESSION["Genes13"]; ?>"></td>
+          <td><input disabled type="text" name="A15" id="A15" maxlength="7" value="<?php if(isset($_SESSION["Genes14"])) echo $_SESSION["Genes14"]; ?>"></td>
+          <td><input disabled type="text" name="A16" id="A16" maxlength="7" value="<?php if(isset($_SESSION["Genes15"])) echo $_SESSION["Genes15"]; ?>"></td>
+          <td><input disabled type="text" name="A17" id="A17" maxlength="7" value="<?php if(isset($_SESSION["Genes16"])) echo $_SESSION["Genes16"]; ?>"></td>
+          <td><input disabled type="text" name="A18" id="A18" maxlength="7" value="<?php if(isset($_SESSION["Genes17"])) echo $_SESSION["Genes17"]; ?>"></td>
+          <td><input disabled type="text" name="A19" id="A19" maxlength="7" value="<?php if(isset($_SESSION["Genes18"])) echo $_SESSION["Genes18"]; ?>"></td>
+          <td><input disabled type="text" name="A20" id="A20" maxlength="7" value="<?php if(isset($_SESSION["Genes19"])) echo $_SESSION["Genes19"]; ?>"></td>
+          <td><input disabled type="text" name="A21" id="A21" maxlength="7" value="<?php if(isset($_SESSION["Genes20"])) echo $_SESSION["Genes20"]; ?>"></td>
+          <td><input disabled type="text" name="A22" id="A22" maxlength="7" value="<?php if(isset($_SESSION["Genes21"])) echo $_SESSION["Genes21"]; ?>"></td>
+          <td><input disabled type="text" name="A23" id="A23" maxlength="7" value="<?php if(isset($_SESSION["Genes22"])) echo $_SESSION["Genes22"]; ?>"></td>
+          <td><input disabled type="text" name="A24" id="A24" maxlength="7" value="<?php if(isset($_SESSION["Genes23"])) echo $_SESSION["Genes23"]; ?>"></td>
+        </tr>
+        <tr>
+          <td><p style="text-align:center;"><strong>C</strong></p></td>
+          <td><input disabled type="text" name="A25" id="A25" maxlength="7" value="<?php if(isset($_SESSION["Genes24"])) echo $_SESSION["Genes24"]; ?>"></td>
+          <td><input disabled type="text" name="A26" id="A26" maxlength="7" value="<?php if(isset($_SESSION["Genes25"])) echo $_SESSION["Genes25"]; ?>"></td>
+          <td><input disabled type="text" name="A27" id="A27" maxlength="7" value="<?php if(isset($_SESSION["Genes26"])) echo $_SESSION["Genes26"]; ?>"></td>
+          <td><input disabled type="text" name="A28" id="A28" maxlength="7" value="<?php if(isset($_SESSION["Genes27"])) echo $_SESSION["Genes27"]; ?>"></td>
+          <td><input disabled type="text" name="A29" id="A29" maxlength="7" value="<?php if(isset($_SESSION["Genes28"])) echo $_SESSION["Genes28"]; ?>"></td>
+          <td><input disabled type="text" name="A30" id="A30" maxlength="7" value="<?php if(isset($_SESSION["Genes29"])) echo $_SESSION["Genes29"]; ?>"></td>
+          <td><input disabled type="text" name="A31" id="A31" maxlength="7" value="<?php if(isset($_SESSION["Genes30"])) echo $_SESSION["Genes30"]; ?>"></td>
+          <td><input disabled type="text" name="A32" id="A32" maxlength="7" value="<?php if(isset($_SESSION["Genes31"])) echo $_SESSION["Genes31"]; ?>"></td>
+          <td><input disabled type="text" name="A33" id="A33" maxlength="7" value="<?php if(isset($_SESSION["Genes32"])) echo $_SESSION["Genes32"]; ?>"></td>
+          <td><input disabled type="text" name="A34" id="A34" maxlength="7" value="<?php if(isset($_SESSION["Genes33"])) echo $_SESSION["Genes33"]; ?>"></td>
+          <td><input disabled type="text" name="A35" id="A35" maxlength="7" value="<?php if(isset($_SESSION["Genes34"])) echo $_SESSION["Genes34"]; ?>"></td>
+          <td><input disabled type="text" name="A36" id="A36" maxlength="7" value="<?php if(isset($_SESSION["Genes35"])) echo $_SESSION["Genes35"]; ?>"></td>
+        </tr>
+        <tr>
+          <td><p style="text-align:center;"><strong>D</strong></p></td>
+          <td><input disabled type="text" name="A37" id="A37" maxlength="7" value="<?php if(isset($_SESSION["Genes36"])) echo $_SESSION["Genes36"]; ?>"></td>
+          <td><input disabled type="text" name="A38" id="A38" maxlength="7" value="<?php if(isset($_SESSION["Genes37"])) echo $_SESSION["Genes37"]; ?>"></td>
+          <td><input disabled type="text" name="A39" id="A39" maxlength="7" value="<?php if(isset($_SESSION["Genes38"])) echo $_SESSION["Genes38"]; ?>"></td>
+          <td><input disabled type="text" name="A40" id="A40" maxlength="7" value="<?php if(isset($_SESSION["Genes39"])) echo $_SESSION["Genes39"]; ?>"></td>
+          <td><input disabled type="text" name="A41" id="A41" maxlength="7" value="<?php if(isset($_SESSION["Genes40"])) echo $_SESSION["Genes40"]; ?>"></td>
+          <td><input disabled type="text" name="A42" id="A42" maxlength="7" value="<?php if(isset($_SESSION["Genes41"])) echo $_SESSION["Genes41"]; ?>"></td>
+          <td><input disabled type="text" name="A43" id="A43" maxlength="7" value="<?php if(isset($_SESSION["Genes42"])) echo $_SESSION["Genes42"]; ?>"></td>
+          <td><input disabled type="text" name="A44" id="A44" maxlength="7" value="<?php if(isset($_SESSION["Genes43"])) echo $_SESSION["Genes43"]; ?>"></td>
+          <td><input disabled type="text" name="A45" id="A45" maxlength="7" value="<?php if(isset($_SESSION["Genes44"])) echo $_SESSION["Genes44"]; ?>"></td>
+          <td><input disabled type="text" name="A46" id="A46" maxlength="7" value="<?php if(isset($_SESSION["Genes45"])) echo $_SESSION["Genes45"]; ?>"></td>
+          <td><input disabled type="text" name="A47" id="A47" maxlength="7" value="<?php if(isset($_SESSION["Genes46"])) echo $_SESSION["Genes46"]; ?>"></td>
+          <td><input disabled type="text" name="A48" id="A48" maxlength="7" value="<?php if(isset($_SESSION["Genes47"])) echo $_SESSION["Genes47"]; ?>"></td>
+        </tr>
+        <tr>
+          <td><p style="text-align:center;"><strong>E</strong></p></td>
+          <td><input disabled type="text" name="A49" id="A49" maxlength="7" value="<?php if(isset($_SESSION["Genes48"])) echo $_SESSION["Genes48"]; ?>"></td>
+          <td><input disabled type="text" name="A50" id="A50" maxlength="7" value="<?php if(isset($_SESSION["Genes49"])) echo $_SESSION["Genes49"]; ?>"></td>
+          <td><input disabled type="text" name="A51" id="A51" maxlength="7" value="<?php if(isset($_SESSION["Genes50"])) echo $_SESSION["Genes50"]; ?>"></td>
+          <td><input disabled type="text" name="A52" id="A52" maxlength="7" value="<?php if(isset($_SESSION["Genes51"])) echo $_SESSION["Genes51"]; ?>"></td>
+          <td><input disabled type="text" name="A53" id="A53" maxlength="7" value="<?php if(isset($_SESSION["Genes52"])) echo $_SESSION["Genes52"]; ?>"></td>
+          <td><input disabled type="text" name="A54" id="A54" maxlength="7" value="<?php if(isset($_SESSION["Genes53"])) echo $_SESSION["Genes53"]; ?>"></td>
+          <td><input disabled type="text" name="A55" id="A55" maxlength="7" value="<?php if(isset($_SESSION["Genes54"])) echo $_SESSION["Genes54"]; ?>"></td>
+          <td><input disabled type="text" name="A56" id="A56" maxlength="7" value="<?php if(isset($_SESSION["Genes55"])) echo $_SESSION["Genes55"]; ?>"></td>
+          <td><input disabled type="text" name="A57" id="A57" maxlength="7" value="<?php if(isset($_SESSION["Genes56"])) echo $_SESSION["Genes56"]; ?>"></td>
+          <td><input disabled type="text" name="A58" id="A58" maxlength="7" value="<?php if(isset($_SESSION["Genes57"])) echo $_SESSION["Genes57"]; ?>"></td>
+          <td><input disabled type="text" name="A59" id="A59" maxlength="7" value="<?php if(isset($_SESSION["Genes58"])) echo $_SESSION["Genes58"]; ?>"></td>
+          <td><input disabled type="text" name="A60" id="A60" maxlength="7" value="<?php if(isset($_SESSION["Genes59"])) echo $_SESSION["Genes59"]; ?>"></td>
+          </td>
+        </tr>
+        <tr>
+          <td><p style="text-align:center;"><strong>F</strong></p></td>
+          <td><input disabled type="text" name="A61" id="A61" maxlength="7" value="<?php if(isset($_SESSION["Genes60"])) echo $_SESSION["Genes60"]; ?>"></td>
+          <td><input disabled type="text" name="A62" id="A62" maxlength="7" value="<?php if(isset($_SESSION["Genes61"])) echo $_SESSION["Genes61"]; ?>"></td>
+          <td><input disabled type="text" name="A63" id="A63" maxlength="7" value="<?php if(isset($_SESSION["Genes62"])) echo $_SESSION["Genes62"]; ?>"></td>
+          <td><input disabled type="text" name="A64" id="A64" maxlength="7" value="<?php if(isset($_SESSION["Genes63"])) echo $_SESSION["Genes63"]; ?>"></td>
+          <td><input disabled type="text" name="A65" id="A65" maxlength="7" value="<?php if(isset($_SESSION["Genes64"])) echo $_SESSION["Genes64"]; ?>"></td>
+          <td><input disabled type="text" name="A66" id="A66" maxlength="7" value="<?php if(isset($_SESSION["Genes65"])) echo $_SESSION["Genes65"]; ?>"></td>
+          <td><input disabled type="text" name="A67" id="A67" maxlength="7" value="<?php if(isset($_SESSION["Genes66"])) echo $_SESSION["Genes66"]; ?>"></td>
+          <td><input disabled type="text" name="A68" id="A68" maxlength="7" value="<?php if(isset($_SESSION["Genes67"])) echo $_SESSION["Genes67"]; ?>"></td>
+          <td><input disabled type="text" name="A69" id="A69" maxlength="7" value="<?php if(isset($_SESSION["Genes68"])) echo $_SESSION["Genes68"]; ?>"></td>
+          <td><input disabled type="text" name="A70" id="A70" maxlength="7" value="<?php if(isset($_SESSION["Genes69"])) echo $_SESSION["Genes69"]; ?>"></td>
+          <td><input disabled type="text" name="A71" id="A71" maxlength="7" value="<?php if(isset($_SESSION["Genes70"])) echo $_SESSION["Genes70"]; ?>"></td>
+          <td><input disabled type="text" name="A72" id="A72" maxlength="7" value="<?php if(isset($_SESSION["Genes71"])) echo $_SESSION["Genes71"]; ?>"></td>
+        </tr>
+        <tr>
+          <td><p style="text-align:center;"><strong>G</strong></p></td>
+          <td><input disabled type="text" name="A73" id="A73" maxlength="7" value="<?php if(isset($_SESSION["Genes72"])) echo $_SESSION["Genes72"]; ?>"></td>
+          <td><input disabled type="text" name="A74" id="A74" maxlength="7" value="<?php if(isset($_SESSION["Genes73"])) echo $_SESSION["Genes73"]; ?>"></td>
+          <td><input disabled type="text" name="A75" id="A75" maxlength="7" value="<?php if(isset($_SESSION["Genes74"])) echo $_SESSION["Genes74"]; ?>"></td>
+          <td><input disabled type="text" name="A76" id="A76" maxlength="7" value="<?php if(isset($_SESSION["Genes75"])) echo $_SESSION["Genes75"]; ?>"></td>
+          <td><input disabled type="text" name="A77" id="A77" maxlength="7" value="<?php if(isset($_SESSION["Genes76"])) echo $_SESSION["Genes76"]; ?>"></td>
+          <td><input disabled type="text" name="A78" id="A78" maxlength="7" value="<?php if(isset($_SESSION["Genes77"])) echo $_SESSION["Genes77"]; ?>"></td>
+          <td><input disabled type="text" name="A79" id="A79" maxlength="7" value="<?php if(isset($_SESSION["Genes78"])) echo $_SESSION["Genes78"]; ?>"></td>
+          <td><input disabled type="text" name="A80" id="A80" maxlength="7" value="<?php if(isset($_SESSION["Genes79"])) echo $_SESSION["Genes79"]; ?>"></td>
+          <td><input disabled type="text" name="A81" id="A81" maxlength="7" value="<?php if(isset($_SESSION["Genes80"])) echo $_SESSION["Genes80"]; ?>"></td>
+          <td><input disabled type="text" name="A82" id="A82" maxlength="7" value="<?php if(isset($_SESSION["Genes81"])) echo $_SESSION["Genes81"]; ?>"></td>
+          <td><input disabled type="text" name="A83" id="A83" maxlength="7" value="<?php if(isset($_SESSION["Genes82"])) echo $_SESSION["Genes82"]; ?>"></td>
+          <td><input disabled type="text" name="A84" id="A84" maxlength="7" value="<?php if(isset($_SESSION["Genes83"])) echo $_SESSION["Genes83"]; ?>"></td>
+        </tr>
+        <tr>
+          <td><p style="text-align:center;"><strong>H</strong></p></td>
+          <td><input disabled type="text" name="A85" id="A85" maxlength="7" value="<?php if(isset($_SESSION["Genes84"])) echo $_SESSION["Genes84"]; ?>"></td>
+          <td><input disabled type="text" name="A86" id="A86" maxlength="7" value="<?php if(isset($_SESSION["Genes85"])) echo $_SESSION["Genes85"]; ?>"></td>
+          <td><input disabled type="text" name="A87" id="A87" maxlength="7" value="<?php if(isset($_SESSION["Genes86"])) echo $_SESSION["Genes86"]; ?>"></td>
+          <td><input disabled type="text" name="A88" id="A88" maxlength="7" value="<?php if(isset($_SESSION["Genes87"])) echo $_SESSION["Genes87"]; ?>"></td>
+          <td><input disabled type="text" name="A89" id="A89" maxlength="7" value="<?php if(isset($_SESSION["Genes88"])) echo $_SESSION["Genes88"]; ?>"></td>
+          <td><input disabled type="text" name="A90" id="A90" maxlength="7" value="<?php if(isset($_SESSION["Genes89"])) echo $_SESSION["Genes89"]; ?>"></td>
+          <td><input disabled type="text" name="A91" id="A91" maxlength="7" value="<?php if(isset($_SESSION["Genes90"])) echo $_SESSION["Genes90"]; ?>"></td>
+          <td><input disabled type="text" name="A92" id="A92" maxlength="7" value="<?php if(isset($_SESSION["Genes91"])) echo $_SESSION["Genes91"]; ?>"></td>
+          <td><input disabled type="text" name="A93" id="A93" maxlength="7" value="<?php if(isset($_SESSION["Genes92"])) echo $_SESSION["Genes92"]; ?>"></td>
+          <td><input disabled type="text" name="A94" id="A94" maxlength="7" value="<?php if(isset($_SESSION["Genes93"])) echo $_SESSION["Genes93"]; ?>"></td>
+          <td><input disabled type="text" name="A95" id="A95" maxlength="7" value="<?php if(isset($_SESSION["Genes94"])) echo $_SESSION["Genes94"]; ?>"></td>
+          <td><input disabled type="text" name="A96" id="A96" maxlength="7" value="<?php if(isset($_SESSION["Genes95"])) echo $_SESSION["Genes95"]; ?>"></td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+</div>

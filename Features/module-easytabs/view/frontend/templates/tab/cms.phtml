@@ -1,0 +1,12 @@
+<?php
+    $id = $block->getCmsBlockId();
+    if (empty($id)) {
+        return;
+    }
+
+    echo $this->getLayout()
+        ->createBlock('')
+        ->setBlockId($id)
+        ->toHtml();
+    echo "<p><b>Product Sheets</b></p>";
+?>

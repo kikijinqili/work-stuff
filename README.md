@@ -2,7 +2,7 @@
  * @Author: Jinqi Li
  * @Date: 2021-01-05 08:30:50
  * @LastEditors: Jinqi Li
- * @LastEditTime: 2021-02-22 09:49:16
+ * @LastEditTime: 2021-03-05 09:01:59
  * @FilePath: \ScienCell-Frontend\README.md
 -->
 # Back-up of my work
@@ -16,7 +16,7 @@
 - [x] Go through old / new websites page by page to find all different parts
 - [x] Modify stem cells - /features/img-btn/test.html
 - [x] 3d cell culture image buttons
-- [ ] full-path breadcrumbs
+- [x] full-path breadcrumbs
 - [x] browse-by layered navigation
 - [x] logos of distributors
 - [ ] Visual sitemaps

@@ -1,0 +1,28 @@
+<?php
+    $date = (string) $block->getDeliveryDate();
+    $time = (string) $block->getDeliveryTime();
+?>
+
+<div id="delivery-date">
+    <?php if ($date && $time) : ?>
+        <strong><?php echo $block->escapeHtml(__('Delivery Date &amp; Time')) ?></strong>
+    <?php elseif ($time) : ?>
+        <strong><?php echo $block->escapeHtml(__('Delivery Time')) ?></strong>
+    <?php else : ?>
+        <strong><?php echo $block->escapeHtml(__('Delivery Date')) ?></strong>
+    <?php endif ?>
+    <span><?php echo $block->escapeHtml($date . ' ' . $time) ?></span>
+</div>
+
+<script type="text/javascript">
+    require(
+        ['jquery'],
+        function ($) {
+            'use strict';
+
+            var element = $('#delivery-date').detach();
+
+            $('.order-shipping-method').append(element);
+        }
+    );
+</script>
