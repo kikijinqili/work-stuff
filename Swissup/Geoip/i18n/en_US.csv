@@ -1,3 +1,0 @@
-Geoip,Geoip
-"Maxmind database filename","Maxmind database filename"
-"<a href='https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz' title='Download GeoCity database'>Download</a> and unzip file under the 'MAGETO_ROOT/var/swissup/geoip/' folder","<a href='https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.tar.gz' title='Download GeoCity database'>Download</a> and unzip file under the 'MAGETO_ROOT/var/swissup/geoip/' folder"

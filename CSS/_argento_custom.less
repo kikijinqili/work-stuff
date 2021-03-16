@@ -1,3 +1,59 @@
+/* 3/16/21
+discription font size
+*/
+p {
+	font-size: 1.1em;
+}
+
+/* 3/15/21
+recently viewed products count
+*/
+.block-viewed-products-grid .product-item:not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(3)):not(:nth-child(4)):not(:nth-child(5)) {
+	display: none;
+}
+
+/* 3/12/21
+recently viewed products link
+*/
+.product-item-name > a {
+	text-decoration: underline !important;
+}
+.product-item-name {
+	margin: 1em 0 !important;
+}
+
+/* 3/11/21
+search bar border
+*/
+@media (min-width: 768px), print {
+	.block-search:not(.folded) .input-text {
+		transition: none !important;
+	}
+
+}
+
+
+/* 3/10/21
+cart-summary disable floating
+print order
+product image cursor
+search list
+*/
+.cart-summary {
+	position: sticky !important;
+}
+@media (min-width: 768px), print {
+	.account .page-main .page-title-wrapper .order-date {
+		margin: 10px 0 0 0 !important;
+	}
+}
+.product.media {
+    cursor: pointer;
+}
+.block-swissup-ajaxsearch-results .custom-item-info-wrapper {
+	display: none;
+}
+
 /* 2/25/21
 scroll up, product price, h5, category image
 */
@@ -50,7 +106,7 @@ div.swiper-container-horizontal>.swiper-pagination-bullets {
 /* 2/23/21
 promo & covid products grid 
 */
-.product-item-inner {
+.block-highlight .product-item-inner {
 	display: none !important;
 }
 .cms-index-index .main .block.widget .products-grid .product-items:not(.slick-slider) .product-item {
@@ -81,7 +137,7 @@ promo & covid products grid
 /* 2/23/21
 second product sheet
 */
-#technical-resources p:nth-child(3) {
+#technical-resources p:not(:nth-child(1)):not(:nth-child(2)) {
 	display: none;
 }
 
@@ -89,7 +145,7 @@ second product sheet
 shopping cart link
 */
 a.continue > span {
-	color: #fe0000;
+	color: #fff !important;
 	font-size: 16px;
 }
 a.continue {
@@ -252,7 +308,7 @@ scroll up
 	-moz-transition: 0.5s;
 	transition: 0.5s;
 }
-a {
+a, a:hover, a:active, a:visited {
 	color: #000;
 }
 
@@ -726,14 +782,14 @@ FAQs css */
 
 /* Added 06/15/20
 Change main navbar color */
-@media (min-width: 768) {
-	.sciencell-main-nav-item {
-		background-color: #fe0000;
-	}
-	.sciencell-main-nav-item > a {
-		color: white !important;
-	}
-}
+// @media (min-width: 768) {
+// 	.sciencell-main-nav-item {
+// 		background-color: #fe0000;
+// 	}
+// 	.sciencell-main-nav-item > a {
+// 		color: white !important;
+// 	}
+// }
 
 /* Added 06/15/20
 Stagger page css */
