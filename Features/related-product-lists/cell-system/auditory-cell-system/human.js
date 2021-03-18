@@ -1,0 +1,8 @@
+/*
+ * @Author: Jinqi Li
+ * @Date: 2021-03-17 09:03:26
+ * @LastEditors: Jinqi Li
+ * @LastEditTime: 2021-03-17 09:08:46
+ * @FilePath: \ScienCell-Frontend\Features\related-product-lists\auditory-cell-system\human.js
+ */
+<div class='sciencell-col-12 category-text'><br><span><strong>Related  Primary Human Cell Products</strong></span><br><br><div class='block-content'><ol class='products-list'><div class='product-shop'><div></div></div><table style='width: 100%;' border='0' cellspacing='0' cellpadding='0'><tbody></tbody></table><div class='product-shop'><div></div></div><table style='width: 100%;' border='0' cellspacing='0' cellpadding='0'><tbody><tr><td align='left' width='20%' height='25'><a href='/products-services/primary-cells/human/cell-systems/auditory-cell-system/human-middle-ear-epithelial-cells.html' title='Human Middle Ear Epithelial Cells'>2460</a></td><td width='15%'>HMEEpiC</td><td width='70%'><a title='HematoGro Medium' href='/products-services/primary-cells/human/cell-systems/auditory-cell-system/human-middle-ear-epithelial-cells.html'>Human Middle Ear Epithelial Cells</a></td></tr></tbody></table><table style='width: 100%;' border='0' cellspacing='0' cellpadding='0'><tbody><tr><td align='left' width='20%' height='25'><a href='/products-services/primary-cells/human/cell-systems/auditory-cell-system/human-middle-ear-fibroblasts.html' title='Human Middle Ear Fibroblasts'>2470</a></td><td width='15%'>HMEF</td><td width='70%'><a title='HematoGro Medium' href='/products-services/primary-cells/human/cell-systems/auditory-cell-system/human-middle-ear-fibroblasts.html'>Human Middle Ear Fibroblasts</a></td></tr></tbody></table></ol></div></div>
