@@ -2,7 +2,7 @@
  * @Author: Jinqi Li
  * @Date: 2021-03-16 16:03:08
  * @LastEditors: Jinqi Li
- * @LastEditTime: 2021-03-18 15:33:52
+ * @LastEditTime: 2021-03-22 13:21:27
  * @FilePath: \ScienCell-Frontend\Features\related-product-lists\argento-theme.js
  */
 define([
@@ -331,4 +331,9 @@ define([
     var stellateHumanDiv = $('.categorypath-products-services-primary-cells-human-cell-types-stellate-cells .column.main');
     var stellateHumanList = "<div class='sciencell-col-12 category-text'><br><span><strong>Related  Primary Animal Cell Products</strong></span><br><br><div class='block-content'><ol class='products-list'><div class='product-shop'><div></div></div><table style='width: 100%;' border='0' cellspacing='0' cellpadding='0'><tbody></tbody></table><div class='product-shop'><div></div></div><table style='width: 100%;' border='0' cellspacing='0' cellpadding='0'><tbody><tr><td align='left' width='20%' height='25'><a href='/products-services/primary-cells/animal/cell-types/stellate-cells/mouse-hepatic-stellate-cells-c57.html' title='Mouse Hepatic Stellate Cells from C57Bl/6'>M5300-57</a></td><td width='20%'>MHSteC</td><td width='60%'><a title='HematoGro Medium' href='/products-services/primary-cells/animal/cell-types/stellate-cells/mouse-hepatic-stellate-cells-c57.html'>Mouse Hepatic Stellate Cells from C57Bl/6</a></td></tr></tbody></table><div class='product-shop'><div></div></div><table style='width: 100%;' border='0' cellspacing='0' cellpadding='0'><tbody><tr><td align='left' width='20%' height='25'><a href='/products-services/primary-cells/animal/cell-types/stellate-cells/mouse-hepatic-stellate-cells.html' title='Mouse Hepatic Stellate Cells from CD1'>M5300</a></td><td width='20%'>MHSteC</td><td width='60%'><a title='HematoGro Medium' href='/products-services/primary-cells/animal/cell-types/stellate-cells/mouse-hepatic-stellate-cells.html'>Mouse Hepatic Stellate Cells from CD1</a></td></tr></tbody></table><div class='product-shop'><div></div></div><table style='width: 100%;' border='0' cellspacing='0' cellpadding='0'><tbody><tr><td align='left' width='20%' height='25'><a href='/products-services/primary-cells/animal/cell-types/stellate-cells/rat-hepatic-stellate-cells.html' title='Rat Hepatic Stellate Cells'>R5300</a></td><td width='20%'>RHSteC</td><td width='60%'><a title='HematoGro Medium' href='/products-services/primary-cells/animal/cell-types/stellate-cells/rat-hepatic-stellate-cells.html'>Rat Hepatic Stellate Cells</a></td></tr></tbody></table><table style='width: 100%;' border='0' cellspacing='0' cellpadding='0'><tbody><tr><td align='left' width='20%' height='25'><a href='/products-services/primary-cells/animal/cell-types/stellate-cells/rat-hepatic-stellate-cells-adult.html' title='Rat Hepatic Stellate Cells-adult'>R5300-a</a></td><td width='20%'>RHSteC-a</td><td width='60%'><a title='HematoGro Medium' href='/products-services/primary-cells/animal/cell-types/stellate-cells/rat-hepatic-stellate-cells-adult.html'>Rat Hepatic Stellate Cells-adult</a></td></tr></tbody></table></ol></div></div>";
     stellateHumanDiv.append(stellateHumanList);
+
+    // CONTACT US FORM
+    var contactDiv = $('.contact-index-index #maincontent');
+    var contactBread = "<div class='sciencell-col-12'><div class='breadcrumbs'><ul class='items'><li class='item home'><a href='/' title='Go to Home Page'>Home</a></li><li class='item category400'><a href='/contact-us.html' title=''>Contact Us</a></li><li class='item category417'><strong>Contact Form</strong></li></ul></div></div>";
+    contactDiv.prepend(contactBread);
 });
