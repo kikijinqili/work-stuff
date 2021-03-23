@@ -1,0 +1,5 @@
+.category-products tr:not(:nth-child(1)):not(:nth-child(2)) a,
+.category-products tr:not(:nth-child(1)):not(:nth-child(2)) td {
+	pointer-events: none;
+	text-decoration: none;
+}
