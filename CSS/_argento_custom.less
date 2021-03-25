@@ -1,8 +1,60 @@
+/* 3/24/21
+product sheet visibility
+navbar list
+*/
+.product-astrocyte-medium #technical-resources p {
+    display: block !important;
+}
+.navbar-list li {
+    margin-top: .5em;
+    margin-bottom: 0 !important;
+}
+.navbar-title {
+	margin-bottom: .5em;
+}
+
 /* 3/23/21
-product specifications font size
+product specifications font size, table width
+product columns
+/genes form buttons
 */
 th.col.label, td.col.data {
     font-size: 1.2em;
+}
+th.col.label {
+    width: 20%;
+}
+table>thead>tr>th, table>tbody>tr>th, table>tfoot>tr>th, table>thead>tr>td, table>tbody>tr>td, table>tfoot>tr>td {
+    padding: 8px !important;
+}
+@media (min-width: 768px), print {
+	.page-layout-1column .product-info-main {
+		width: 50%;
+	}
+	.page-layout-1column .product.media {
+		width: 47%;
+	}
+}
+.genes form {
+	margin-bottom: 10px;
+}
+.genes a {
+	text-decoration: none;
+}
+.categorypath-products-services-genetics-genomics-custom-services-for-qpcr .message.info.empty {
+	display: none;
+}
+.categorypath-products-services-genetics-genomics-custom-services-for-qpcr-genequerytm-cdna-synthesis-service .message.info.empty {
+	display: none;
+}
+.categorypath-products-services-genetics-genomics-custom-services-for-qpcr-genequerytm-custom-qpcr-service .message.info.empty {
+	display: none;
+}
+.categorypath-products-services-genetics-genomics-custom-services-for-qpcr-genequerytm-genomic-dna-purification-service .message.info.empty {
+	display: none;
+}
+.categorypath-products-services-genetics-genomics-custom-services-for-qpcr-genequerytm-total-rna-purification-service .message.info.empty {
+	display: none;
 }
 
 /* 3/22/21
