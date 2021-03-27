@@ -2,8 +2,8 @@
  * @Author: Jinqi Li
  * @Date: 2021-03-16 16:03:08
  * @LastEditors: Jinqi Li
- * @LastEditTime: 2021-03-22 13:21:27
- * @FilePath: \ScienCell-Frontend\Features\related-product-lists\argento-theme.js
+ * @LastEditTime: 2021-03-26 16:26:16
+ * @FilePath: \ScienCell-Frontend\JS\argento-theme.js
  */
 define([
     'jquery',
@@ -336,4 +336,9 @@ define([
     var contactDiv = $('.contact-index-index #maincontent');
     var contactBread = "<div class='sciencell-col-12'><div class='breadcrumbs'><ul class='items'><li class='item home'><a href='/' title='Go to Home Page'>Home</a></li><li class='item category400'><a href='/contact-us.html' title=''>Contact Us</a></li><li class='item category417'><strong>Contact Form</strong></li></ul></div></div>";
     contactDiv.prepend(contactBread);
+
+    // /sars-cov-2-coronavirus-detection-kit
+    var sarsDiv = $('.cms-sars-cov-2-coronavirus-detection-kit #maincontent');
+    var sarsBread = "<div class='sciencell-col-12'><div class='breadcrumbs'><ul class='items'><li class='item home'><a href='/' title='Go to Home Page'>Home</a></li><li class='item'><strong>SARS-CoV-2 Coronavirus Detection Kit</strong></li></ul></div></div>";
+    sarsDiv.prepend(sarsBread);
 });

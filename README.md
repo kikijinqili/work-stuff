@@ -2,7 +2,7 @@
  * @Author: Jinqi Li
  * @Date: 2021-01-05 08:30:50
  * @LastEditors: Jinqi Li
- * @LastEditTime: 2021-03-05 09:01:59
+ * @LastEditTime: 2021-03-26 14:45:24
  * @FilePath: \ScienCell-Frontend\README.md
 -->
 # Back-up of my work
@@ -21,7 +21,7 @@
 - [x] logos of distributors
 - [ ] Visual sitemaps
 - [x] search bar customization
-- [ ] redesign shopping cart and check out
+- [x] redesign shopping cart and check out
 
 <!-- 
 animal primary cells page

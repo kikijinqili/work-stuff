@@ -1,0 +1,210 @@
+<!--
+ * @Author: Jinqi Li
+ * @Date: 2021-03-25 10:07:51
+ * @LastEditors: Jinqi Li
+ * @LastEditTime: 2021-03-25 10:38:21
+ * @FilePath: \ScienCell-Frontend\Features\hla-service\new.html
+-->
+
+<div class="col-main">
+    <div class="std">
+        <style>
+            .description-box>h1 {
+                margin-bottom: 20px;
+            }
+
+            .description-box>table {
+                border: 0;
+            }
+
+            .description-box>table>caption,
+            .detail-box>table>caption {
+                caption-side: top;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+
+            .description-box th {
+                background-color: #ddd;
+                padding: 5px;
+                padding-right: 20px;
+            }
+
+            .description-box td,
+            .detail-box td {
+                padding: 5px;
+            }
+
+            .price-box {
+                padding: 17px 10px;
+                background: #f4f4f4;
+                border: 1px solid #eee;
+                position: relative;
+                margin-top: 25px;
+                line-height: 28px;
+            }
+
+            .price-box::after {
+                content: '.';
+                opacity: 0;
+            }
+
+            #price-tag {
+                font-weight: 700;
+                line-height: 1.2em;
+                margin: 0;
+                display: block;
+                width: 50%;
+                font-size: 1.5em;
+                float: left;
+            }
+
+            .detail-box {
+                grid-column: 1 / 5;
+                grid-row: 2 / 4;
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+            }
+
+            #inquire-button {
+                float: right;
+            }
+
+            @media (max-width: 768px) {
+                .product-page {
+                    display: flex;
+                    flex-direction: column;
+                }
+            }
+
+            #product-addtocart-button {
+                background-color: #fe0000;
+                border: #fe0000;
+            }
+
+            .hla th,
+            .hla td {
+                text-align: center !important;
+                border: 2px solid #fff;
+            }
+
+            .hla tbody tr:nth-child(even) {
+                background-color: #ddd;
+            }
+
+            .hla tbody tr:nth-child(odd) {
+                background-color: #f2f2f2;
+            }
+
+            .message.info.empty {
+                display: none;
+            }
+        </style>
+
+        <div class="product-page row text-pop">
+            <div class="description-box">
+                <h1>HLA Genotyping Service</h1>
+                <p>ScienCell offers HLA genotyping service using our GeneQuery™ HLA PCR+Sanger SBT Typing Kits (Cat
+                    #GK891/GK892/GK893/GK894/GK895/GK896). Simply send us your cell samples or genomic DNA samples and
+                    we will deliver
+                    results in a timely manner. Typing results will be delivered in the format of 4-digit genotypes
+                    (e.g., HLA-A*02:01
+                    and HLA-A*25:01).</p>
+                <table class="hla">
+                    <thead>
+                        <tr style="background:#b3b3b3">
+                            <th>
+                                Service type
+                            </th>
+                            <th>
+                                Price ($)/sample
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                HLA-A Genotyping
+                            </td>
+                            <td>
+                                90
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                HLA-B Genotyping
+                            </td>
+                            <td>
+                                90
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                HLA-C Genotyping
+                            </td>
+                            <td>
+                                90
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                HLA-DPB1 Genotyping
+                            </td>
+                            <td>
+                                90
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                HLA-DQB1 Genotyping
+                            </td>
+                            <td>
+                                90
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                HLA-DRB1 Genotyping
+                            </td>
+                            <td>
+                                90
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Genomic DNA Purification
+                            </td>
+                            <td>
+                                110
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br />
+                <p><b>
+                        Please inquire below and provide the following information in the email:
+                    </b></p>
+                <ul style="list-style: disc inside;">
+                    <li>Institution Name</li>
+                    <li>Number of Samples and Sample Names</li>
+                    <li>Services Requesting</li>
+                    <li>Brief Sample Description (Genomic DNA Concentration and Volume, Cell Types, Cell Numbers, Cell
+                        Treatment,
+                        Infectious Materials, etc.)</li>
+                </ul>
+                <p>You may also request to genotype the primary cells ScienCell offers. For details, please inquire
+                    below.</p>
+                <br />
+                <div class="add-to-cart">
+                    <button type="button" title="Inquire" id="product-addtocart-button" class="button btn-cart"
+                        onclick="window.location.href = 'mailto:info@sciencellonline.com?subject=Inquiry%3A%20HLA%20Genotyping%20Service'">
+                        <span>Inquire</span>
+                    </button>
+                </div>
+                <br />
+                <p style="text-align: left;"><a href="mailto:info@sciencellonline.com">info@sciencellonline.com</a></p>
+            </div>
+        </div>
+    </div>
+</div>
