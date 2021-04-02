@@ -1,0 +1,61 @@
+<div>
+	<p style="font-weight:bold;">Search for Publications on a Product by Catalog Number below:</p> 
+	<div>
+        <form action="/technical-support/publications.html" method="get" name="search">
+            <input type="text" name="keyword" id="keyword" />
+			<div class="actions" style="margin-top:10px;">
+                <button class="action primary" title="Search" type="submit" aria-label="Search">Search</button>
+            </div>
+        </form>
+		<br/>
+        <?php
+			if(isset($_GET['keyword'])){
+                $Catno = $_GET['keyword'];
+                $hostname='https://c72205.sgvps.net:2083';
+                $username='poweruserdb';
+                $password='Manoj1234';
+                $dbname='poweruserdb';
+                $usertable='your_tablename';
+                $yourfield = 'your_field';
+
+                mysql_connect($hostname,$username, $password) OR DIE ('Unable to connect to database! Please try again later.');
+                mysql_select_db($dbname);
+
+                $resultPub=mysql_query("SELECT * FROM `Publication` WHERE Catno = '$Catno' ORDER by Yr DESC");
+
+                $num_rows_Pub = mysql_num_rows($resultPub);
+                $i = 0;
+
+                if($num_rows_Pub)
+                {	
+                    echo "";
+                    while ($resultsPub = mysql_fetch_array($resultPub))
+                    {
+                        $Journal=$resultsPub['Journal'];
+                        $Citation=$resultsPub['Citation'];
+                        $URL=$resultsPub['Link'];
+                        $journalwithi = "<i>".$Journal."</i>";
+                        $Citation = str_replace( $Journal, $journalwithi , $Citation );
+                        $i = $i + 1;
+                            if($URL)
+                        {
+                            $Citation = "<a href=$URL target=_BLANK >".$Citation."</a>";
+                            //echo "<br /><b> Full text link <a href=$URL target=_BLANK >HERE</a></b> ";
+                        }
+                        echo $i, ".) " ,$Citation,"";
+                        echo "<br /><br />";
+                                    if ($i > 19) {
+                            break;
+                        }
+                    }
+                    echo "<p><strong>ScienCell Research Laboratories (SRL) takes pride in being a resource for researchers all over the world. The publications listed here are not meant as an endorsement or confirmation of the reliability of the research methods. Our sole intention of sharing the research publications listed here is to provide research related insights and innovations of our products with other researchers.</strong></p>
+                    <br />";
+                } 
+                else 
+                {
+                    echo "<p>No Publication available at this time.</p>";
+                }
+            }
+        ?>
+    </div>
+</div>
