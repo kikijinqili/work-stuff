@@ -1,0 +1,25 @@
+<div>
+	<p style="font-weight:bold;">Search for a Product Sheet by Catalog Number below:</p> 
+	<div>
+		<form action="/technical-support/manuals-and-protocols.html" method="get" name="search">
+  			<input type="text" name="keyword" id="keyword" />
+			<div class="actions" style="margin-top:10px;">
+                <button class="action primary" title="Search" type="submit" aria-label="Search">Search</button>
+            </div>
+		</form>
+		<br/>
+		<?php
+			if(isset($_GET['keyword'])){
+				$documentRoot = $_SERVER['DOCUMENT_ROOT'];
+				$filename = $_GET['keyword'];
+				$filepath = $documentRoot."/PS/".$filename.".pdf";
+				if (file_exists($filepath)){
+					echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='PDF'><a href='/PS/$filename.pdf' title='Product Sheet' target='_blank'>$filename</a></p>";
+				}
+				else{
+					echo "<p>Product Sheet for Catalog Number $filename does not exist or not available at this time. Please contact <a href='mailto:info@sciencellonline.com' title='Email sales'>info@sciencellonline.com</a> for further assistance.</p>";
+				}
+			}
+		?>
+	</div>
+</div>

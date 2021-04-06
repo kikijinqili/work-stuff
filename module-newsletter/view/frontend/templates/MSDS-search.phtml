@@ -1,0 +1,30 @@
+<div>
+	<p style="font-weight:bold;">Search for a Safety Data Sheet by Catalog Number below:</p> 
+	<div>
+		<form action="/technical-support/safety-data-sheets.html" method="get" name="search">
+  			<input type="text" name="keyword" id="keyword" />
+			<div class="actions" style="margin-top:10px;">
+                <button class="action primary" title="Search" type="submit" aria-label="Search">Search</button>
+            </div>
+		</form>
+		<br/>
+		<?php
+			if(isset($_GET['keyword'])){
+				$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    			$customerSession = $objectManager->get('\Magento\Customer\Model\Session');
+				$documentRoot = $_SERVER['DOCUMENT_ROOT'];
+				$filename = $_GET['keyword'];
+				$filepath = $documentRoot."/MSDS/".$filename.".pdf";
+				if(file_exists($filepath)){
+					if($customerSession->isLoggedIn()){
+						echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='PDF'><a href='/MSDS/$filename.pdf' title='Safety Data Sheet' target='_blank'>$filename</a></p>";
+					}else{
+						echo "Safety Data Sheet found, please <a href='/customer/account/login/' title='login'>login</a> or <a href='/customer/account/create/' title='register'>register</a> to access the Safety Data Sheet.";
+					}
+				}else{
+					echo "<p>Safety Data Sheet for Catalog Number $filename does not exist or not available at this time. Please contact <a href='mailto:info@sciencellonline.com' title='Email sales'>info@sciencellonline.com</a> for further assistance.</p>";
+				}
+			}
+		?>
+	</div>
+</div>

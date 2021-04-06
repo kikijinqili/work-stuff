@@ -1,7 +1,7 @@
 <div>
 	<p style="font-weight:bold;">Search for Publications on a Product by Catalog Number below:</p> 
 	<div>
-        <form action="/technical-support/publications.html" method="get" name="search">
+        <form action="https://www.sciencellonline.com/technical-support/publications.html" method="get" name="search">
             <input type="text" name="keyword" id="keyword" />
 			<div class="actions" style="margin-top:10px;">
                 <button class="action primary" title="Search" type="submit" aria-label="Search">Search</button>
@@ -18,18 +18,18 @@
                 $usertable='your_tablename';
                 $yourfield = 'your_field';
 
-                mysql_connect($hostname,$username, $password) OR DIE ('Unable to connect to database! Please try again later.');
-                mysql_select_db($dbname);
+                $connection = mysqli_connect($hostname, $username, $password, $dbname) or die ('Unable to connect to database! Please try again later.');
+                // mysqli_select_db($dbname);
 
-                $resultPub=mysql_query("SELECT * FROM `Publication` WHERE Catno = '$Catno' ORDER by Yr DESC");
+                $resultPub = mysqli_query($connection, "SELECT * FROM `Publication` WHERE Catno = '$Catno' ORDER by Yr DESC");
 
-                $num_rows_Pub = mysql_num_rows($resultPub);
+                $num_rows_Pub = mysqli_num_rows($resultPub);
                 $i = 0;
 
                 if($num_rows_Pub)
                 {	
                     echo "";
-                    while ($resultsPub = mysql_fetch_array($resultPub))
+                    while ($resultsPub = mysqli_fetch_array($resultPub))
                     {
                         $Journal=$resultsPub['Journal'];
                         $Citation=$resultsPub['Citation'];
