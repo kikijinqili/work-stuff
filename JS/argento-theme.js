@@ -2,7 +2,7 @@
  * @Author: Jinqi Li
  * @Date: 2021-03-16 16:03:08
  * @LastEditors: Jinqi Li
- * @LastEditTime: 2021-03-26 16:26:16
+ * @LastEditTime: 2021-04-06 09:33:10
  * @FilePath: \ScienCell-Frontend\JS\argento-theme.js
  */
 define([
@@ -341,4 +341,14 @@ define([
     var sarsDiv = $('.cms-sars-cov-2-coronavirus-detection-kit #maincontent');
     var sarsBread = "<div class='sciencell-col-12'><div class='breadcrumbs'><ul class='items'><li class='item home'><a href='/' title='Go to Home Page'>Home</a></li><li class='item'><strong>SARS-CoV-2 Coronavirus Detection Kit</strong></li></ul></div></div>";
     sarsDiv.prepend(sarsBread);
+
+    // sciencell-research-laboratories-fight-against-sarscov2
+    var covDiv = $('.cms-sciencell-research-laboratories-fight-against-sarscov2 #maincontent');
+    var covBread = "<div class='sciencell-col-12'><div class='breadcrumbs'><ul class='items'><li class='item home'><a href='/' title='Go to Home Page'>Home</a></li><li class='item'><strong>ScienCell Research Laboratories Fight Against SARS-CoV-2</strong></li></ul></div></div>";
+    covDiv.prepend(covBread);
+
+    // neurons
+    var neuronDiv = $('.cms-neurons #maincontent');
+    var neuronBread = "<div class='sciencell-col-12'><div class='breadcrumbs'><ul class='items'><li class='item home'><a href='/' title='Go to Home Page'>Home</a></li><li class='item'><strong>Neurons</strong></li></ul></div></div>";
+    neuronDiv.prepend(neuronBread);
 });
