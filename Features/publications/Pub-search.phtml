@@ -1,7 +1,7 @@
 <div>
 	<p style="font-weight:bold;">Search for Publications on a Product by Catalog Number below:</p> 
 	<div>
-        <form action="https://www.sciencellonline.com/technical-support/publications.html" method="get" name="search">
+        <form action="/technical-support/publications.html" method="get" name="search">
             <input type="text" name="keyword" id="keyword" />
 			<div class="actions" style="margin-top:10px;">
                 <button class="action primary" title="Search" type="submit" aria-label="Search">Search</button>
@@ -11,7 +11,7 @@
         <?php
 			if(isset($_GET['keyword'])){
                 $Catno = $_GET['keyword'];
-                $hostname='https://c72205.sgvps.net:2083';
+                $hostname='https://c72205.sgvps.net';
                 $username='poweruserdb';
                 $password='Manoj1234';
                 $dbname='poweruserdb';

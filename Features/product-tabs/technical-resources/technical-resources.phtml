@@ -1,0 +1,97 @@
+<?php
+    $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+    $customerSession = $objectManager->get('\Magento\Customer\Model\Session');
+    $product = $objectManager->get('\Magento\Framework\Registry')->registry('current_product');
+    $keyword = $product->getSku();
+    $documentRoot = $_SERVER['DOCUMENT_ROOT'];
+    echo "<p><b>Product Sheets</b></p>";
+
+    if (!file_exists("$documentRoot/PS/$keyword.pdf")){
+	if ($keyword != 'MB9018'){
+            echo "<p>No Product Sheets available yet</p>";
+        }
+    }
+    if (file_exists("$documentRoot/PS/$keyword.pdf")){
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheet'><a href='/PS/$keyword.pdf' title='Product Sheet' target='_blank'>$keyword</a></p>";
+    }
+     if (file_exists("PS/$keyword-b.pdf"))
+    {
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheets'><a href='/PS/$keyword-b.pdf' title='Product Sheet' target='_blank'>$keyword-b (Basal Medium)</a></p>";
+    }
+    if (file_exists("PS/$keyword-b-prf.pdf"))
+    {
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheets'><a href='/PS/$keyword-b-prf.pdf' title='Product Sheet' target='_blank'>$keyword-b-prf (Basal & Phenol Red Free Medium)</a></p>";
+    }
+    if (file_exists("PS/$keyword-prf.pdf"))
+    {
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheets'><a href='/PS/$keyword-prf.pdf' title='Product Sheet' target='_blank'>$keyword-prf (Complete Phenol Red Free Medium)</a></p>";
+    }
+    if (file_exists("PS/$keyword-2.pdf"))
+    {
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheets'><a href='/PS/$keyword-2.pdf' title='Product Sheet' target='_blank'>$keyword-2 (2 Million Cells per Vial)</a></p>";
+    }
+    if (file_exists("PS/$keyword-5.pdf"))
+    {
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheets'><a href='/PS/$keyword-5.pdf' title='Product Sheet' target='_blank'>$keyword-5 (5 Million Cells per Vial)</a></p>";
+    }
+    if (file_exists("PS/$keyword-100.pdf"))
+    {
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheets'><a href='/PS/$keyword-100.pdf' title='Product Sheet' target='_blank'>$keyword-100 (500 units)</a></p>";
+    }
+    if (file_exists("PS/$keyword-400.pdf"))
+    {
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheets'><a href='/PS/$keyword-400.pdf' title='Product Sheet' target='_blank'>$keyword-400 (2000 units)</a></p>";
+    }
+    if (file_exists("PS/$keyword-10.pdf"))
+    {
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheets'><a href='/PS/$keyword-10.pdf' title='Product Sheet' target='_blank'>$keyword-10 (10 Million Cells per Vial)</a></p>";
+    }
+    if (file_exists("PS/$keyword-57.pdf"))
+    {
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheets'><a href='/PS/$keyword-57.pdf' title='Product Sheet' target='_blank'>$keyword-57</a></p>";       
+    }
+    if (file_exists("PS/$keyword-mt.pdf"))
+    {
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheets'><a href='/PS/$keyword-mt.pdf' title='Product Sheet' target='_blank'>$keyword-mt (mitomycin C treated)</a></p>";
+    }
+    if (file_exists("PS/$keyword-2-mt.pdf"))
+    {
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheets'><a href='/PS/$keyword-2-mt.pdf' title='Product Sheet' target='_blank'>$keyword-2-mt (2 Million per Vial - mitomycin C treated)</a></p>";
+    }
+    if (file_exists("PS/$keyword-5-mt.pdf"))
+    {
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheets'><a href='/PS/$keyword-5-mt.pdf' title='Product Sheet' target='_blank'>$keyword-5-mt (5 Million per Vial - mitomycin C treated)</a></p>";
+    }
+    if (file_exists("PS/$keyword-NG.pdf"))
+    {
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheets'><a href='/PS/$keyword-NG.pdf' title='Product Sheet' target='_blank'>$keyword-NG (Non Glutamine)</a></p>";
+    }
+    if (file_exists("PS/$keyword-GF.pdf"))
+    {
+        echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='Product Sheets'><a href='/PS/$keyword-GF.pdf' title='Product Sheet' target='_blank'>$keyword-GF (Glucose Free)</a></p>";
+    }
+    echo "</br>";
+    if (file_exists("MSDS/$keyword.pdf"))
+    {
+        echo "<p><b>Safety Data Sheets</b></p>";
+        if(!$customerSession->isLoggedIn()){
+            echo "<p>Please <a href='/customer/account/login/' title='login'>login</a> or <a href='/customer/account/create/' title='register'>register</a> to access the Safety Data Sheet</p>";
+        }
+        else{
+            echo "<p><img src='/pub/media/images/etc/pdf.jpg' alt='MSDS'><a href='/MSDS/$keyword.pdf' title='MSDS' target=_blank>$keyword</a></p><br/>";
+        }
+        echo "<br/>";
+    }
+?>
+<div>
+    <p style="font-weight:bold;">Search for a Certificate of Analysis by Lot Number below:</p> 
+    <div>
+        <form action="/technical-support/certificate-of-analysis.html" method="get" name="search">
+            <input type="text" name="keyword" id="keyword" />
+            <div class="actions" style="margin-top:10px;">
+                <button class="action primary" title="Search" type="submit" aria-label="Search">Search</button>
+            </div>
+        </form>
+        <br/>
+    </div>
+</div>
