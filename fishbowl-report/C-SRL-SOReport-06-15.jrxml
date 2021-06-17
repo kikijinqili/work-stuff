@@ -1,0 +1,1438 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="C-SRL-SOReport" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="704" leftMargin="44" rightMargin="44" topMargin="54" bottomMargin="54" uuid="30099e57-3f78-4048-aed1-274b44e8e585">
+	<property name="ireport.zoom" value="1.2396694214876032"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="1203"/>
+	<subDataset name="LineData" uuid="439f672f-bec6-4dd9-a1ee-732c27b05fa9">
+		<parameter name="soid" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select
+	soitem.solineitem as "Item No.",
+	soitem.productnum as "Catalog No.",
+	soitem.description as "Description",
+	soitem.note,
+	product.details,
+          soitem.showitemflag,
+
+	soitem.qtytofulfill as "Qty",
+	soitem.unitprice as "Unit Price",
+	(soitem.qtytofulfill * soitem.unitprice) as "Total"
+from soitem
+	left join product on product.id = soitem.productid
+
+where soitem.soid = $P{soid}
+and not ( soitem.typeid in (40, 60) or soitem.productnum in ('0000','0001') )
+and soitem.showitemflag = 1
+and lower(soitem.note) <> 'cancelled'
+order by soitem.solineitem]]>
+		</queryString>
+		<field name="Item No." class="java.lang.Integer"/>
+		<field name="Catalog No." class="java.lang.String"/>
+		<field name="Description" class="java.lang.String"/>
+		<field name="NOTE" class="java.lang.String"/>
+		<field name="DETAILS" class="java.lang.String"/>
+		<field name="SHOWITEMFLAG" class="java.lang.Integer"/>
+		<field name="Qty" class="java.lang.Double"/>
+		<field name="Unit Price" class="java.lang.Double"/>
+		<field name="Total" class="java.lang.Double"/>
+	</subDataset>
+	<subDataset name="PaymentData" uuid="888a65cb-1fbd-416c-a229-ab9cbb0ad16f">
+		<parameter name="soNum" class="java.lang.String"/>
+		<queryString>
+			<![CDATA[select
+    postransaction.datetime,
+    paymentmethod.name,
+    postransaction.amount
+from postransaction
+    join paymentmethod on paymentmethod.id = postransaction.paymentmethodid
+
+where postransaction.soid = (select id from so where num = '22085' )]]>
+		</queryString>
+		<field name="DATETIME" class="java.sql.Timestamp"/>
+		<field name="NAME" class="java.lang.String"/>
+		<field name="AMOUNT" class="java.lang.Double"/>
+	</subDataset>
+	<parameter name="soNum" class="java.lang.String">
+		<defaultValueExpression><![CDATA["0"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+    so.id as soid,
+    so.statusid sostatus,
+
+    so.shiptoname as soldtoname,
+    addressmultilinesoview.shiptoaddress1 as soldtoadr1,
+    addressmultilinesoview.shiptoaddress2 as soldtoadr2,
+    addressmultilinesoview.shiptoaddress3 as soldtoadr3,
+    so.shiptocity as soldtocity,
+    soldstate.code as soldtostate,
+    so.shiptozip as soldtozip,
+    countryconst.name as soldtoCountry,
+    soldtophone.datus as soldtophone,
+    soldtofax.datus as soldtofax,
+    soldtoemail.datus as soldtoemail,
+
+    so.billtoname as billtoname,
+    (case
+     when locate(char(10), so.billtoaddress) > 0 then substring(so.billtoaddress from 1 for (locate(char(10), so.billtoaddress) - 1))
+     else so.billtoaddress
+    end) as billtoadr1,
+    (case
+     when locate(char(10), so.billtoaddress) > 0 and locate(char(10), so.billtoaddress, locate(char(10), so.billtoaddress) + 1) = 0 then substring(so.billtoaddress from (locate(char(10), so.billtoaddress) + 1))
+     when locate(char(10), so.billtoaddress) > 0 and locate(char(10), so.billtoaddress, locate(char(10), so.billtoaddress) + 1) > 0 then substring(so.billtoaddress from (locate(char(10), so.billtoaddress) + 1) for (locate(char(10), so.billtoaddress, locate(char(10), so.billtoaddress) + 1) - (locate(char(10), so.billtoaddress) + 1)))
+     else ''
+    end) as billtoadr2,
+    (case
+     when locate(char(10), so.billtoaddress, locate(char(10), so.billtoaddress) + 1) > 0 then substring(so.billtoaddress from locate(char(10), so.billtoaddress, locate(char(10), so.billtoaddress) + 1) + 1)
+     else ''
+    end) as billtoadr3,
+
+    so.billtocity as billtocity,
+    billstate.code as billtostate,
+    so.billtozip as billtozip,
+    billcountry.name as billcountry,
+    so.customercontact as billtoattn,
+    billtoemail.datus as billtoemail,
+    billphone.datus as billphone,
+
+    so.num as invoiceno,
+(CASE WHEN so.num=69043 THEN CAST('2021-06-04' AS datetime)
+WHEN so.num=69170 THEN CAST('2021-06-14' AS datetime)
+WHEN so.num=68238 THEN CAST('2021-06-14' AS datetime)
+ELSE so.datecompleted
+END) AS invoicedate,
+    so.customerpo as orderno,
+    DATE_ADD(so.datecompleted, INTERVAL paymentterms.netdays DAY) as duedate,
+    customer.number as customerno,
+
+    lt.allitems-lt.shipping-lt.dryice as amtsubtotal,
+    lt.shipping as amtshipping,
+    lt.dryice as amtdryice,
+    so.totaltax as amttax,
+    lt.allitems+so.totaltax as amttotal,
+    COALESCE(pt.amt,0) as amtpayments,
+    (lt.allitems+so.totaltax)-COALESCE(pt.amt,0) as amtamountdue,
+    pt.ct as paymentcount,
+    billfax.datus as billtofax
+
+
+from so
+    left join addressmultilinesoview on addressmultilinesoview.soid = so.id
+    join customer on customer.id = so.customerid
+    left join paymentterms on paymentterms.id = so.paymenttermsid
+    left join address on address.address = so.shiptoaddress and address.accountid = customer.accountid
+    LEFT JOIN address billaddress on so.billtoaddress = billaddress.address and billaddress.accountid = customer.accountid
+    left join address shipaddress on so.shiptoaddress = shipaddress.address and shipaddress.accountid = customer.accountid
+    left join addressmultilineview on addressmultilineview.id = address.id
+    left join contact as billfax on billfax.typeid = 40 and billfax.addressid = billaddress.id and billfax.defaultflag =1
+    LEFT JOIN contact as billtoEmail on billtoemail.typeid = 60 and billtoemail.addressid = billaddress.id and billtoemail.defaultflag = 1
+    left join contact as billphone on billphone.addressid = billaddress.id and billphone.defaultflag = 1 and billphone.typeid = 50
+    left join contact as soldtophone on soldtophone.addressid = shipaddress.id and soldtophone.defaultflag = 1 and soldtophone.typeid = 50
+    LEFT JOIN contact as soldtoemail on soldtoemail.typeid = 60 and soldtoemail.addressid = shipaddress.id and soldtoemail.defaultflag = 1
+    left join contact as soldtofax on soldtofax.typeid = 40 and soldtofax.addressid = shipaddress.id and soldtofax.defaultflag =1
+    LEFT JOIN stateConst billState ON so.billToStateId = billState.id
+    LEFT JOIN stateConst soldState ON so.shiptostateid = soldstate.id
+    LEFT JOIN countryconst on so.shiptocountryid = countryconst.id
+    LEFT JOIN countryconst billcountry on so.billtocountryid = billcountry.id
+    left join (select soid, count(id) as ct, sum(amount) amt from postransaction group by soid ) as pt on pt.soid = so.id
+    left join (select
+                        soitem.soid,
+                        sum( IF( soitem.typeid <> 40 /* Subtotal lines */, soitem.qtytofulfill * soitem.unitprice, 0 ) ) as allitems,
+                        SUM( IF( soitem.typeid = 60 /* Shipping Line Item TYpes */ , soitem.qtytofulfill * soitem.unitprice, 0 ) ) as shipping,
+                        SUM( IF( soitem.productnum in ('0000','0001') , soitem.qtytofulfill * soitem.unitprice, 0 ) ) as dryice
+                from soitem
+                where lower(soitem.note) <> 'cancelled'
+                group by soitem.soid) as lt on lt.soid = so.id
+
+where so.num = $P{soNum}]]>
+	</queryString>
+	<field name="SOID" class="java.lang.Integer"/>
+	<field name="SOSTATUS" class="java.lang.Integer"/>
+	<field name="SOLDTONAME" class="java.lang.String"/>
+	<field name="SOLDTOADR1" class="java.lang.String"/>
+	<field name="SOLDTOADR2" class="java.lang.String"/>
+	<field name="SOLDTOADR3" class="java.lang.String"/>
+	<field name="SOLDTOCITY" class="java.lang.String"/>
+	<field name="SOLDTOSTATE" class="java.lang.String"/>
+	<field name="SOLDTOZIP" class="java.lang.String"/>
+	<field name="SOLDTOCOUNTRY" class="java.lang.String"/>
+	<field name="SOLDTOPHONE" class="java.lang.String"/>
+	<field name="SOLDTOFAX" class="java.lang.String"/>
+	<field name="SOLDTOEMAIL" class="java.lang.String"/>
+	<field name="BILLTONAME" class="java.lang.String"/>
+	<field name="BILLTOADR1" class="java.lang.String"/>
+	<field name="BILLTOADR2" class="java.lang.String"/>
+	<field name="BILLTOADR3" class="java.lang.String"/>
+	<field name="BILLTOCITY" class="java.lang.String"/>
+	<field name="BILLTOSTATE" class="java.lang.String"/>
+	<field name="BILLTOZIP" class="java.lang.String"/>
+	<field name="BILLCOUNTRY" class="java.lang.String"/>
+	<field name="BILLTOATTN" class="java.lang.String"/>
+	<field name="BILLTOEMAIL" class="java.lang.String"/>
+	<field name="BILLPHONE" class="java.lang.String"/>
+	<field name="INVOICENO" class="java.lang.String"/>
+	<field name="INVOICEDATE" class="java.sql.Timestamp"/>
+	<field name="ORDERNO" class="java.lang.String"/>
+	<field name="DUEDATE" class="java.sql.Timestamp"/>
+	<field name="CUSTOMERNO" class="java.lang.String"/>
+	<field name="AMTSUBTOTAL" class="java.lang.Double"/>
+	<field name="AMTSHIPPING" class="java.lang.Double"/>
+	<field name="AMTDRYICE" class="java.lang.Double"/>
+	<field name="AMTTAX" class="java.lang.Double"/>
+	<field name="AMTTOTAL" class="java.lang.Double"/>
+	<field name="AMTPAYMENTS" class="java.lang.Double"/>
+	<field name="AMTAMOUNTDUE" class="java.lang.Double"/>
+	<field name="PAYMENTCOUNT" class="java.lang.Integer"/>
+	<field name="BILLTOFAX" class="java.lang.String"/>
+	<group name="NewTotal" footerPosition="ForceAtBottom">
+		<groupExpression><![CDATA[$F{SOID}]]></groupExpression>
+		<groupHeader>
+			<band height="237" splitType="Immediate">
+				<componentElement>
+					<reportElement key="table" x="1" y="0" width="704" height="237" backcolor="#000000" uuid="d3dc0142-5cb4-4cbd-82b6-acf30283c9c2">
+						<printWhenExpression><![CDATA[new Boolean(true)]]></printWhenExpression>
+					</reportElement>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
+						<datasetRun subDataset="LineData" uuid="5b8fc2d2-fe60-4521-b031-9598d2dcb484">
+							<datasetParameter name="soid">
+								<datasetParameterExpression><![CDATA[$F{SOID}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+						<jr:column width="42" uuid="9ad13678-2eef-4e48-b3c5-d4f6686f0f78">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader height="11" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="42" height="11" uuid="2e7aa0a8-fc2b-49a5-aaae-dbbe92355198"/>
+									<textElement textAlignment="Center">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Item No.]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell height="20" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="42" height="20" uuid="7300b261-7c09-4d51-bfcf-b7b1616022d2"/>
+									<box topPadding="3"/>
+									<textElement textAlignment="Center">
+										<font size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="72" uuid="a406a8bb-9ff6-4560-8361-cd3299cab9fb">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader height="11" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="72" height="11" uuid="1c2a8458-f530-4d30-b6ae-e1fec922fc51"/>
+									<textElement textAlignment="Center">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Catalog No.]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell height="20" rowSpan="1">
+								<textField isBlankWhenNull="true">
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="72" height="20" uuid="9422f0fb-cec0-4303-ab4a-f375757851b2"/>
+									<box topPadding="3"/>
+									<textElement textAlignment="Center">
+										<font size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{Catalog No.}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="430" uuid="1460469e-ca82-414c-bf4c-219b48bcfca1">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader height="11" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="430" height="11" uuid="2500aa62-a60c-4d08-b329-0671971d9d78"/>
+									<textElement textAlignment="Center">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Description]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell height="20" rowSpan="1">
+								<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="430" height="20" uuid="6ee77991-d57c-45d0-88a7-a2a5341c8621"/>
+									<box topPadding="3" leftPadding="18"/>
+									<textElement>
+										<font size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{Description} +
+( $F{NOTE} != null && $F{NOTE} != "" ? "\n"+$F{NOTE} : "" )]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="23" uuid="6de37584-94b2-4515-bfe4-0b71d0ca7ad0">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader height="11" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="23" height="11" uuid="6ca59575-159f-4fb0-ae29-9a6379b67b7b"/>
+									<textElement textAlignment="Center">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Qty]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell height="20" rowSpan="1">
+								<textField pattern="###0.##" isBlankWhenNull="true">
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="23" height="20" uuid="6efb849a-2c43-42fe-8d37-1807ee6d3dcc"/>
+									<box topPadding="3"/>
+									<textElement textAlignment="Center">
+										<font size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{Qty}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="65" uuid="579c946c-e609-46a6-82fa-79dfb6166713">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader height="11" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="65" height="11" uuid="7e9927ba-8af7-4eb2-bda2-e60e4ddb9e69"/>
+									<textElement textAlignment="Center">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Unit Price]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell height="20" rowSpan="1">
+								<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="65" height="20" uuid="7e1f089a-a900-4d88-9ad5-d822e0ffd96e"/>
+									<box topPadding="3" rightPadding="5"/>
+									<textElement textAlignment="Right">
+										<font size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{Unit Price}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="72" uuid="0cf9ca5a-fa7c-4123-8c95-fe3fcd03d96f">
+							<jr:tableHeader height="0" rowSpan="1"/>
+							<jr:tableFooter height="0" rowSpan="1"/>
+							<jr:columnHeader height="11" rowSpan="1">
+								<staticText>
+									<reportElement x="0" y="0" width="72" height="11" uuid="ef20d199-ee11-4238-8059-bc0a5066f01d"/>
+									<textElement textAlignment="Center">
+										<font size="8" isBold="true"/>
+									</textElement>
+									<text><![CDATA[Total]]></text>
+								</staticText>
+							</jr:columnHeader>
+							<jr:columnFooter height="0" rowSpan="1"/>
+							<jr:detailCell height="20" rowSpan="1">
+								<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+									<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="72" height="20" uuid="5826c88e-3a1d-4c7e-9f23-62db717099f1"/>
+									<box topPadding="3" rightPadding="5"/>
+									<textElement textAlignment="Right">
+										<font size="9"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{Total}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band>
+				<printWhenExpression><![CDATA[new Boolean(  $F{PAYMENTCOUNT} > 0)]]></printWhenExpression>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band height="504" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="165" width="42" height="241" uuid="2b18f98d-d3d6-4cc1-8e19-32d1f2a58931"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="154" width="42" height="11" uuid="26a53f52-b801-41e9-baea-50488e2be2b9"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="42" y="165" width="72" height="241" uuid="0e264fe0-d684-40e6-86d5-8bd04cd4e1e7"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="42" y="154" width="72" height="11" uuid="81f706bc-1ca5-4e10-9c33-1fda4400c206"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="114" y="165" width="430" height="241" uuid="388bb9f0-4a23-42b7-be41-4a688e981da2"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="114" y="154" width="430" height="11" uuid="8876a82d-3541-4381-9659-7ba00cac4d73"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="544" y="165" width="23" height="241" uuid="6e0c459d-d896-427d-aab2-7b3b14c2da66"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="544" y="154" width="23" height="11" uuid="e817169b-db02-41eb-9571-f6dfca836b5b"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="567" y="165" width="65" height="241" uuid="8e2ba366-4dd2-4d63-80eb-58579cc2992e"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="567" y="154" width="65" height="11" uuid="6295179a-062f-4de3-b15b-0b2a10c35ece"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="632" y="165" width="72" height="241" uuid="f512351b-b83e-4b12-a4fc-8e67dc8f3743"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="632" y="154" width="72" height="11" uuid="3d70d83b-32d0-4cfb-b275-a956e0479e78"/>
+				<box>
+					<topPen lineWidth="0.25" lineStyle="Dashed"/>
+					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+					<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+					<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+				</box>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="611" y="484" width="80" height="20" uuid="087062ee-9d34-46ea-bb3f-2623d9d90a1f"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="698" y="484" width="40" height="20" uuid="6ed0b4b0-d07a-417d-9288-ff425e48cf30"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="155" splitType="Stretch">
+			<image hAlign="Center" vAlign="Bottom">
+				<reportElement x="0" y="0" width="192" height="54" uuid="25b31693-4f45-4389-85a7-43151b60e7af"/>
+				<imageExpression><![CDATA["Logo-300dpi.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="192" y="0" width="122" height="54" uuid="2b3eced9-6798-48c9-88f7-f398f87b0ddd"/>
+				<box leftPadding="10"/>
+				<textElement verticalAlignment="Middle">
+					<paragraph lineSpacing="Fixed" lineSpacingSize="9.0"/>
+				</textElement>
+				<text><![CDATA[1610 Faraday Ave
+Carlsbad, CA 92008
+Tel: (760) 602-8549
+Fax: (760 602-8575]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="414" y="27" width="124" height="25" uuid="f0e3fca9-1288-4714-9a94-ac614479351f"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="none">
+					<font fontName="Times New Roman" size="16" isBold="true" isItalic="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOSTATUS} == 10 ? "Quote" : "Invoice"]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="560" y="30" width="144" height="108" uuid="fc3c38d6-0cf3-4430-b9fd-2baa6ed64772"/>
+				<graphicElement>
+					<pen lineWidth="1.25"/>
+				</graphicElement>
+			</rectangle>
+			<textField>
+				<reportElement x="563" y="31" width="64" height="20" uuid="441f4e78-68f5-4baa-bab1-604d0963a2a2"/>
+				<box leftPadding="4">
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOSTATUS} == 10 ? "Quote No." : "Invoice No."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="563" y="52" width="58" height="21" uuid="c2da35ff-ce19-4d1f-85aa-835d9ad08c61"/>
+				<box leftPadding="4">
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOSTATUS} == 10 ? "Quote Date" : "Invoice Date"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="563" y="73" width="41" height="21" uuid="7abed141-ab25-4f10-8bf3-7c1d24628d67"/>
+				<box leftPadding="4">
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[P.O. No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="563" y="94" width="48" height="21" uuid="3b45f410-0d92-4e2a-a97f-d6da11e62602"/>
+				<box leftPadding="4">
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Due Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="563" y="115" width="60" height="21" uuid="403ac098-d6eb-4c21-acd8-8c1ebf4d33ad"/>
+				<box leftPadding="4"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Customer No.]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="627" y="31" width="74" height="20" uuid="78e3caf9-92e4-422f-891b-087fecbebfe8"/>
+				<box rightPadding="4">
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INVOICENO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yy" isBlankWhenNull="true">
+				<reportElement x="621" y="52" width="80" height="21" uuid="5b10247a-9e15-4788-b11d-1048bca6c015"/>
+				<box rightPadding="4">
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{INVOICEDATE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="604" y="73" width="97" height="21" uuid="d4ce894d-c2d7-407a-9340-b4acffd8482c"/>
+				<box rightPadding="4">
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ORDERNO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MM/dd/yy" isBlankWhenNull="true">
+				<reportElement x="611" y="94" width="90" height="21" uuid="9d160532-f789-4c4e-8fba-fcf6093eb229"/>
+				<box rightPadding="4">
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{DUEDATE}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement x="623" y="115" width="78" height="21" uuid="88740267-5048-4319-998d-098aa555e078"/>
+				<box rightPadding="4"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CUSTOMERNO}]]></textFieldExpression>
+			</textField>
+			<elementGroup>
+				<rectangle radius="11">
+					<reportElement x="0" y="60" width="259" height="90" uuid="b72ce599-05f7-4dc2-8014-5ce497cc2436"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineStyle="Solid"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement x="195" y="110" width="13" height="13" uuid="0bcc4f2a-0de9-439b-a45c-5003e522cee9">
+						<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[ZIP]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="17" y="54" width="40" height="14" uuid="7b8f4f4c-4e45-439e-b631-5d243c56a846"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Sold To]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="46" y="77" width="210" height="11" uuid="a4123e13-e3b5-4a34-9138-16bf00948660"/>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+						<paragraph lineSpacing="Fixed"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SOLDTOADR1}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="46" y="110" width="92" height="12" uuid="361d4950-8dc1-4298-8ef0-701fc14b50ea">
+						<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SOLDTOCITY}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="65" width="46" height="11" uuid="e10c744b-4980-4369-8b39-3658a2c02bc8"/>
+					<box leftPadding="5"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Name]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="46" y="122" width="92" height="12" uuid="574a521f-ccfc-4f5c-a35a-715479c9b331"/>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SOLDTOPHONE}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="46" y="65" width="210" height="11" uuid="0c3b8cf1-6456-442c-ba4b-07f759631826"/>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SOLDTONAME}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="122" width="46" height="13" uuid="8e612d16-53b5-4ced-b8e8-a469c4475633"/>
+					<box leftPadding="5"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Phone]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="77" width="46" height="13" uuid="203fe632-d42a-4558-a014-41cc4c7949e2"/>
+					<box leftPadding="5"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Address]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+					<reportElement x="208" y="110" width="48" height="12" uuid="8113d737-86f8-4811-9f97-3c685ae80bcf">
+						<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SOLDTOZIP}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="138" y="110" width="20" height="13" uuid="689c9f97-c81f-4f95-bc25-f36942600b64">
+						<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0" rightPadding="1"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[State]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="158" y="110" width="37" height="12" uuid="d088f6c3-a1cc-48ce-a01e-99e21dcc5de0">
+						<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="2">
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SOLDTOSTATE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="110" width="46" height="13" uuid="e62b1556-b3d3-49a7-9c3b-34fea6b3fca4">
+						<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[City]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="46" y="99" width="210" height="11" uuid="485c8656-d083-405e-878f-e0db878858a5">
+						<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SOLDTOADR3}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="46" y="88" width="210" height="11" uuid="47bf7daf-f9c2-44af-919a-930b1dd96d8b"/>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SOLDTOADR2}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="46" y="134" width="210" height="12" uuid="09db7590-a872-43e5-b3c6-b355ec9322db"/>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SOLDTOEMAIL}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="134" width="46" height="13" uuid="3326db59-9609-4996-80e9-c524fb64e634"/>
+					<box leftPadding="5"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Email]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="110" width="46" height="13" uuid="4579b5bb-bd2c-40c0-8652-328532fb3b60">
+						<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Country]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="46" y="110" width="92" height="12" uuid="9eb1b078-4ba0-4d57-b034-3fa8fdaf016d">
+						<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{SOLDTOCOUNTRY}]]></textFieldExpression>
+				</textField>
+			</elementGroup>
+			<elementGroup>
+				<rectangle radius="11">
+					<reportElement x="275" y="60" width="259" height="90" uuid="a7bbaf2c-3e2d-4977-94bb-fc54d67da0d0"/>
+					<graphicElement>
+						<pen lineWidth="0.5" lineStyle="Solid"/>
+					</graphicElement>
+				</rectangle>
+				<staticText>
+					<reportElement x="468" y="110" width="13" height="13" uuid="823f1d05-2e48-4eaa-bf37-6a5e99e3f171">
+						<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[ZIP]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="292" y="54" width="40" height="14" uuid="0dbb17d8-9c9f-4d87-bae9-c517a28c8d78"/>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[Bill To]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="321" y="77" width="210" height="11" uuid="86293412-784d-47c1-ac33-bfa49e0e9173"/>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+						<paragraph lineSpacing="Fixed"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BILLTOADR1}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="321" y="110" width="92" height="12" uuid="3448eb38-b32a-4c9b-a6a3-65ae8f233bb6">
+						<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BILLTOCITY}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="275" y="65" width="46" height="11" uuid="ad569295-1105-4284-99e6-be51229270ae"/>
+					<box leftPadding="5"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Name]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="321" y="65" width="210" height="11" uuid="cad6e18e-46fc-44db-8be9-d569cdf94f45"/>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8" isUnderline="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BILLTONAME}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="275" y="77" width="46" height="13" uuid="851bfdc5-fe42-4d17-876a-97aa52059774"/>
+					<box leftPadding="5"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Address]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="481" y="110" width="50" height="12" uuid="996039a1-eef9-4285-bea7-cbcef270dea9">
+						<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="3">
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BILLTOZIP}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="413" y="110" width="20" height="13" uuid="9b1df0db-fd0d-404f-8c0f-016d4520e657">
+						<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="0" rightPadding="1"/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[State]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="433" y="110" width="35" height="12" uuid="71e9197a-22ec-45a4-acd5-3431c4614ab3">
+						<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="2">
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BILLTOSTATE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="275" y="110" width="46" height="13" uuid="6437597f-efd3-4a6d-9d3e-0ba2b902ec72">
+						<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[City]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="321" y="99" width="210" height="11" uuid="ba2fa7ce-b2f1-4a14-ad71-c0429cdda4f6">
+						<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
+$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BILLTOADR3}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="321" y="88" width="210" height="11" uuid="b10be98d-0215-4854-af0e-7b80c69ce8b9"/>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BILLTOADR2}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="321" y="110" width="92" height="12" uuid="07ae3733-269e-4426-8d98-e8ed2c2e212d">
+						<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box>
+						<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+					</box>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{BILLCOUNTRY}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="275" y="110" width="46" height="13" uuid="2ec5f72b-99cf-46e4-b70b-dbf49236855e">
+						<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+					</reportElement>
+					<box leftPadding="5"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Country]]></text>
+				</staticText>
+			</elementGroup>
+			<textField isBlankWhenNull="true">
+				<reportElement x="321" y="122" width="92" height="12" uuid="7a5b8ee1-61e2-4a7d-9518-b05ef2537075"/>
+				<box>
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BILLPHONE}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="275" y="133" width="46" height="13" uuid="e0d3b721-f34e-4865-8d5e-8696d0e9f0aa"/>
+				<box leftPadding="5"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Email]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="275" y="122" width="46" height="13" uuid="5235211e-c7db-4c13-9a03-f767a8ac2acb"/>
+				<box leftPadding="5"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Phone]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="321" y="134" width="210" height="12" uuid="1c164ea9-75fc-48a0-8a77-d77707c5708c"/>
+				<box>
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BILLTOEMAIL}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="321" y="99" width="147" height="12" uuid="9d7c0f36-64f9-4582-9dd0-bb32e73b5f19">
+					<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") &&
+$F{BILLCOUNTRY} != null &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BILLTOCITY}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="275" y="99" width="46" height="13" uuid="a4323ce9-bd8d-4bad-a739-6cb24f2e10f6">
+					<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") &&
+$F{BILLCOUNTRY} != null &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[City]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="468" y="99" width="13" height="13" uuid="01da7913-2515-44ef-9119-4a84b38256a9">
+					<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") &&
+$F{BILLCOUNTRY} != null &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[ZIP]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="481" y="99" width="50" height="12" uuid="c708b960-1006-4f99-9199-f747a9f782ef">
+					<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") &&
+$F{BILLCOUNTRY} != null &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3">
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BILLTOZIP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="413" y="122" width="20" height="13" uuid="3c50a3e7-40ae-43b2-bbc4-e0fb57a77eff"/>
+				<box leftPadding="0" rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Fax]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="433" y="122" width="98" height="12" uuid="f53e625a-5fa1-409a-81c2-e93d7c94e252"/>
+				<box leftPadding="0">
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BILLTOFAX}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="208" y="99" width="48" height="12" uuid="bf9a0340-1c4b-47f4-a8e9-a4efaf95ea6a">
+					<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3">
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOLDTOZIP}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="99" width="46" height="13" uuid="e152f0bb-1682-414d-9672-70dc9deb9477">
+					<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") &&
+$F{BILLCOUNTRY} != null &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="5"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[City]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="46" y="99" width="149" height="12" uuid="5e8798a3-fb22-4e78-a08f-f6f45d0c2ca1">
+					<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") &&
+$F{BILLCOUNTRY} != null &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOLDTOCITY}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="195" y="99" width="13" height="13" uuid="dea094b6-b182-4eb4-9c0e-4e272ca4c824">
+					<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") &&
+!$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[ZIP]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="158" y="122" width="98" height="12" uuid="57b4103e-d4ef-4f82-a5a6-ef5a8f42d45c"/>
+				<box leftPadding="0">
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOLDTOFAX}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="138" y="122" width="20" height="13" uuid="760f1fe9-413a-4441-8371-5e001fc6c80e"/>
+				<box leftPadding="0" rightPadding="2"/>
+				<textElement textAlignment="Right">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Fax]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="112" splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="112">
+			<elementGroup>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="632" y="53" width="72" height="11" uuid="16c6f2c0-b27c-4e31-ac6c-57ccf5bfc0e3"/>
+					<box rightPadding="10">
+						<pen lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{AMTTAX}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="100" y="20" width="159" height="36" uuid="5ca54894-229e-4fbf-b65e-5973184e14cc"/>
+					<box topPadding="5"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[ScienCell Research Laboratories
+1610 Faraday Ave
+Carlsbad, CA 92008]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="567" y="42" width="65" height="11" uuid="0ffb2885-a039-4b37-996b-21f17236daf2"/>
+					<box rightPadding="15"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Dry Ice]]></text>
+				</staticText>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="632" y="64" width="72" height="11" uuid="4372ce89-6e17-4229-b916-f09fd7622989"/>
+					<box rightPadding="10">
+						<pen lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{AMTTOTAL}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="1" y="47" width="137" height="22" uuid="f6267527-680b-41ed-9df5-1f8dbb491d4f"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[FEIN: 20-8386504
+D-U-N-S Number: 00-288-2210]]></text>
+				</staticText>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="632" y="42" width="72" height="11" uuid="f417f017-5128-4dca-b899-219988d99fad"/>
+					<box rightPadding="10">
+						<pen lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{AMTDRYICE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="370" y="39" width="43" height="17" uuid="28af2666-0c05-450d-9b1b-19ca0fd734da"/>
+					<textElement verticalAlignment="Bottom">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Thank You!]]></text>
+				</staticText>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="632" y="20" width="72" height="11" uuid="c54cc87e-ecab-4c72-ab7a-65d9d96e8b36"/>
+					<box rightPadding="10">
+						<pen lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{AMTSUBTOTAL}]]></textFieldExpression>
+				</textField>
+				<componentElement>
+					<reportElement key="table" positionType="Float" x="0" y="0" width="704" height="20" uuid="38683232-9e36-450f-8ba8-2472f1076919">
+						<printWhenExpression><![CDATA[new Boolean(  $F{PAYMENTCOUNT} > 0 )]]></printWhenExpression>
+					</reportElement>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
+						<datasetRun subDataset="PaymentData" uuid="3f8adb4d-0886-4a8d-b2cc-2474cfce17be">
+							<datasetParameter name="soNum">
+								<datasetParameterExpression><![CDATA[$P{soNum}]]></datasetParameterExpression>
+							</datasetParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						</datasetRun>
+						<jr:column width="704" uuid="fdae1127-6780-433d-a446-0648e9ef9478">
+							<jr:columnHeader height="0" rowSpan="1"/>
+							<jr:detailCell height="11" rowSpan="1">
+								<textField>
+									<reportElement x="0" y="0" width="704" height="11" uuid="be988665-4058-4c10-9271-d8dd08f026ae"/>
+									<textElement textAlignment="Center">
+										<font size="8"/>
+									</textElement>
+									<textFieldExpression><![CDATA["Amount Charged to " + $F{NAME} + " : " + new String(new DecimalFormat("$0.00").format($F{AMOUNT}) )]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
+				<staticText>
+					<reportElement positionType="Float" x="259" y="21" width="279" height="18" uuid="89d109a9-a0a3-431e-a218-15d481666af0"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Please visit our website at www.sciencellonline.com!]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="538" y="31" width="94" height="11" uuid="2c231047-fc1e-4673-8b48-227e5b7099ec"/>
+					<box rightPadding="15"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Shipping & Handling]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="567" y="75" width="65" height="11" uuid="6a3c1f5b-e873-4730-8d0b-ffa38732a78f"/>
+					<box rightPadding="15"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Amount Due]]></text>
+				</staticText>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="632" y="31" width="72" height="11" uuid="6dac99d0-4057-4068-a8e9-b94f927b5216"/>
+					<box rightPadding="10">
+						<pen lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{AMTSHIPPING}]]></textFieldExpression>
+				</textField>
+				<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+					<reportElement positionType="Float" x="632" y="75" width="72" height="11" uuid="aa0d3ee9-3361-447a-b02c-321d7fff4bdc"/>
+					<box rightPadding="10">
+						<pen lineStyle="Dotted"/>
+						<topPen lineWidth="0.25" lineStyle="Dashed"/>
+						<leftPen lineWidth="0.25" lineStyle="Dashed"/>
+						<bottomPen lineWidth="0.25" lineStyle="Dashed"/>
+						<rightPen lineWidth="0.25" lineStyle="Dashed"/>
+					</box>
+					<textElement textAlignment="Right">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{AMTAMOUNTDUE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement positionType="Float" x="0" y="20" width="100" height="20" uuid="50f95297-7ac5-4071-bef7-7f8e6ec7aa0a"/>
+					<box topPadding="5"/>
+					<textElement>
+						<font size="8"/>
+					</textElement>
+					<text><![CDATA[Remittances to:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="567" y="64" width="65" height="11" uuid="51e35c9c-78da-4771-8075-c5c15625a2a3"/>
+					<box rightPadding="15"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<text><![CDATA[TOTAL]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="567" y="53" width="65" height="11" uuid="8aafb946-911a-49be-aee2-2b632c6fb01c"/>
+					<box rightPadding="15"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Tax]]></text>
+				</staticText>
+				<staticText>
+					<reportElement positionType="Float" x="567" y="20" width="65" height="11" uuid="cfd451a8-cef4-4882-9998-7c0046aaaded"/>
+					<box rightPadding="15"/>
+					<textElement textAlignment="Right">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Subtotal]]></text>
+				</staticText>
+			</elementGroup>
+			<staticText>
+				<reportElement positionType="Float" x="4" y="71" width="556" height="12" uuid="2a55f88e-6f6a-4a6c-9b2e-e5b6f3f78beb"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Invoice number(s) MUST be included with each payment. Failure to do so will cause delay in processing. Please pay the full amount of ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="4" y="84" width="556" height="12" uuid="75dfe498-0ffc-45fe-a44e-c4ba3bceacec"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[the invoice without deducting bank fees. Customers are responsible for any correspondent and/or intermediary bank transaction fees.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="4" y="98" width="556" height="12" uuid="fcd56585-96e0-4509-b982-70243962af53"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[All past due invoices are subject to a late charge of 1.5% per month.]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+	<noData>
+		<band height="50"/>
+	</noData>
+</jasperReport>
