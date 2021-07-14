@@ -31,11 +31,6 @@
 	<style name="column_head" fontName="Arial" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 	<style name="body" isDefault="true" fontName="Arial" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
 	<style name="note" fontName="Arial" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
-	<style name="table">
-		<box>
-			<pen lineWidth="1.0" lineColor="#000000"/>
-		</box>
-	</style>
 	<subDataset name="Summary" uuid="3d5e59c9-32e0-4608-a49d-2bad205abca9">
 		<parameter name="ckShowCommitted" class="java.lang.String" isForPrompting="false">
 			<parameterDescription><![CDATA[30,0]]></parameterDescription>
@@ -60,7 +55,7 @@ FROM pick
     LEFT OUTER JOIN qbclass ON product.qbClassId = qbclass.id
 
 WHERE pick.id = $P{pickID}
-    AND (part.num NOT IN ('0000', '0000-2', '0001', '0006', '0007'))
+    AND (part.num NOT IN ('0000', '0000-2', '0001', '0006', '0007', 'Handling fees', 'Shipping'))
 
 GROUP BY pick.id, uom.code, part.num, part.description
 
@@ -72,27 +67,28 @@ ORDER BY qbclass.name, substring(part.num, 4, 1), part.num]]>
 		<field name="PICKITEMPARTDESC" class="java.lang.String"/>
 		<field name="PICKITEMQTY" class="java.lang.Double"/>
 	</subDataset>
-	<subDataset name="TotalSum" uuid="2771e4c3-e3f3-4718-9b55-181203a0cd84">
+	<subDataset name="Total" uuid="7832610e-e2fe-4043-b275-64de02cd2e3d">
 		<parameter name="ckShowCommitted" class="java.lang.String" isForPrompting="false">
 			<parameterDescription><![CDATA[30,0]]></parameterDescription>
 			<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
 		</parameter>
 		<parameter name="pickID" class="java.lang.String" isForPrompting="false"/>
 		<queryString>
-			<![CDATA[SELECT *
+			<![CDATA[SELECT *,
+    (CASE WHEN suff = 1 THEN "Total Number of 500ml Basal Media Bottles"
+       WHEN suff = 2 THEN "Total Number of 5ml Growth Supplement Tubes"
+       END) AS DescriptionSum,
+       SUM(PickItemQty) AS QuantitySum
 
     FROM (
     SELECT pick.id AS PickID,
        uom.code AS PickItemUOM,
        part.num AS PickItemPartNum,
        part.description AS PickItemPartDesc,
+       SUM(pickitem.qty)  AS PickItemQty,
        product.qbClassId AS PickItemPartClass,
        qbclass.name AS PickItemPartClassName,
-       substring(part.num, 4, 1) AS suff,
-       (CASE WHEN substring(part.num, 4, 1) = 1 THEN "Total Number of 500ml Basal Media Bottles"
-       WHEN substring(part.num, 4, 1) = 2 THEN "Total Number of 5ml Growth Supplement Tubes"
-       END) AS DescriptionSum,
-       SUM(pickitem.qty) AS QuantitySum
+       substring(part.num, 4, 1) AS suff
 
     FROM pick
         LEFT OUTER JOIN pickitem ON pick.id = pickitem.pickid
@@ -101,10 +97,11 @@ ORDER BY qbclass.name, substring(part.num, 4, 1), part.num]]>
         LEFT OUTER JOIN product ON part.num = product.num
         LEFT OUTER JOIN qbclass ON product.qbClassId = qbclass.id
 
-    WHERE pick.id = 50165 AND (part.num NOT IN (0000, 0000-2, 0001, 0006, 0007))
+    WHERE pick.id = $P{pickID}
+    AND (part.num NOT IN ('0000', '0000-2', '0001', '0006', '0007', 'Handling fees', 'Shipping'))
 
     GROUP BY pick.id, uom.code, part.num, part.description
-    
+
     ORDER BY qbclass.name, substring(part.num, 4, 1), part.num
     ) A
 
@@ -175,7 +172,7 @@ FROM pick
 WHERE pick.num = $P{pickNum}
   AND (part.typeid != 30 AND pickitem.statusid != 6)
 
-ORDER BY OrderNumber, part.num]]>
+order by OrderNumber, part.num]]>
 	</queryString>
 	<field name="PICKDATESCHEDULED" class="java.sql.Timestamp"/>
 	<field name="PICKITEMQTY" class="java.lang.Double"/>
@@ -201,13 +198,62 @@ ORDER BY OrderNumber, part.num]]>
 			<band/>
 		</groupHeader>
 		<groupFooter>
-			<band height="1">
-				<line>
-					<reportElement x="0" y="0" width="540" height="1" uuid="89435431-8081-47ec-b35f-2f54922ad319"/>
-					<graphicElement>
-						<pen lineWidth="2.0"/>
-					</graphicElement>
-				</line>
+			<band height="1"/>
+		</groupFooter>
+	</group>
+	<group name="Total">
+		<groupExpression><![CDATA[$F{PICKID}]]></groupExpression>
+		<groupFooter>
+			<band height="62">
+				<componentElement>
+					<reportElement key="table" x="0" y="19" width="540" height="43" uuid="8f20c1e8-de84-4d1b-b4fc-87a464a3ef4c"/>
+					<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+						<datasetRun subDataset="Total" uuid="9f5aa854-8745-4547-8031-8c1e7ac965bd">
+							<datasetParameter name="pickID">
+								<datasetParameterExpression><![CDATA[$F{PICKID}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="ckShowCommitted">
+								<datasetParameterExpression><![CDATA[$P{ckShowCommitted}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+						<jr:column width="169" uuid="2a48800c-01aa-4dbc-bffd-4cf5877bad3e">
+							<jr:detailCell height="19" rowSpan="1">
+								<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+									<pen lineWidth="1.0"/>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textField pattern="###0">
+									<reportElement x="13" y="0" width="132" height="17" uuid="b28bba8d-e98d-4534-bed9-b53f3f2ee0de"/>
+									<textElement>
+										<font size="11"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{QuantitySum}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+						<jr:column width="356" uuid="a305a08c-8008-41f6-a473-7e0c84ae2944">
+							<jr:detailCell height="19" rowSpan="1">
+								<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+									<pen lineWidth="1.0"/>
+									<topPen lineWidth="1.0"/>
+									<leftPen lineWidth="1.0"/>
+									<bottomPen lineWidth="1.0"/>
+									<rightPen lineWidth="1.0"/>
+								</box>
+								<textField>
+									<reportElement x="11" y="0" width="341" height="17" uuid="ad1c87df-e18e-4f9f-b8d0-483a3a749f2a"/>
+									<textElement>
+										<font size="11"/>
+									</textElement>
+									<textFieldExpression><![CDATA[$F{DescriptionSum}]]></textFieldExpression>
+								</textField>
+							</jr:detailCell>
+						</jr:column>
+					</jr:table>
+				</componentElement>
 			</band>
 		</groupFooter>
 	</group>
@@ -357,6 +403,12 @@ ORDER BY OrderNumber, part.num]]>
 				<box bottomPadding="2"/>
 				<text><![CDATA[]]></text>
 			</staticText>
+			<line>
+				<reportElement x="0" y="13" width="540" height="1" uuid="89435431-8081-47ec-b35f-2f54922ad319"/>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
 		</band>
 	</detail>
 	<columnFooter>
@@ -409,7 +461,7 @@ ORDER BY OrderNumber, part.num]]>
 		</band>
 	</pageFooter>
 	<summary>
-		<band height="202" splitType="Prevent">
+		<band height="112" splitType="Prevent">
 			<staticText>
 				<reportElement key="staticText-1" style="24b" mode="Transparent" x="0" y="0" width="540" height="40" forecolor="#000000" backcolor="#FFFFFF" uuid="5612e2db-ff90-4613-ba75-1fd636fa0114"/>
 				<box>
@@ -425,7 +477,7 @@ ORDER BY OrderNumber, part.num]]>
 				<text><![CDATA[Summary]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement key="table" x="0" y="113" width="390" height="72" uuid="ba19d3dd-4bfb-4fa9-b3e0-d735bd57715d"/>
+				<reportElement key="table" x="0" y="40" width="390" height="72" uuid="ba19d3dd-4bfb-4fa9-b3e0-d735bd57715d"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
 					<datasetRun subDataset="Summary" uuid="e40796c4-e3cf-4ff8-a501-6a8ffd9ccbf6">
 						<datasetParameter name="pickID">
@@ -436,7 +488,7 @@ ORDER BY OrderNumber, part.num]]>
 						</datasetParameter>
 					</datasetRun>
 					<jr:column width="70" uuid="4bcc444d-ec6a-40a9-bdce-8aa1d33a78f0">
-						<jr:columnHeader height="22" rowSpan="1">
+						<jr:columnHeader height="20" rowSpan="1">
 							<box>
 								<pen lineWidth="1.25"/>
 								<topPen lineWidth="1.25"/>
@@ -452,7 +504,7 @@ ORDER BY OrderNumber, part.num]]>
 								<text><![CDATA[Quantity]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell height="18" rowSpan="1">
+						<jr:detailCell height="14" rowSpan="1">
 							<box>
 								<pen lineWidth="1.25"/>
 								<topPen lineWidth="1.25"/>
@@ -473,7 +525,7 @@ ORDER BY OrderNumber, part.num]]>
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="70" uuid="33034074-c6bf-4223-b8ee-61890311df6a">
-						<jr:columnHeader height="22" rowSpan="1">
+						<jr:columnHeader height="20" rowSpan="1">
 							<box>
 								<pen lineWidth="1.25"/>
 								<topPen lineWidth="1.25"/>
@@ -489,7 +541,7 @@ ORDER BY OrderNumber, part.num]]>
 								<text><![CDATA[Catalog  #]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell height="18" rowSpan="1">
+						<jr:detailCell height="14" rowSpan="1">
 							<box>
 								<pen lineWidth="1.25"/>
 								<topPen lineWidth="1.25"/>
@@ -504,8 +556,8 @@ ORDER BY OrderNumber, part.num]]>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="246" uuid="c77071af-6a46-4fa1-900d-f8a1f56f95e2">
-						<jr:columnHeader height="22" rowSpan="1">
+					<jr:column width="250" uuid="c77071af-6a46-4fa1-900d-f8a1f56f95e2">
+						<jr:columnHeader height="20" rowSpan="1">
 							<box>
 								<pen lineWidth="1.25"/>
 								<topPen lineWidth="1.25"/>
@@ -514,14 +566,14 @@ ORDER BY OrderNumber, part.num]]>
 								<rightPen lineWidth="1.25"/>
 							</box>
 							<staticText>
-								<reportElement x="0" y="0" width="246" height="20" uuid="2cb3a7a5-90bf-4f0a-a6b4-718770c69cb1"/>
+								<reportElement x="0" y="0" width="250" height="20" uuid="2cb3a7a5-90bf-4f0a-a6b4-718770c69cb1"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
 									<font size="11" isBold="true"/>
 								</textElement>
 								<text><![CDATA[Description]]></text>
 							</staticText>
 						</jr:columnHeader>
-						<jr:detailCell height="18" rowSpan="1">
+						<jr:detailCell height="14" rowSpan="1">
 							<box>
 								<pen lineWidth="1.25"/>
 								<topPen lineWidth="1.25"/>
@@ -530,70 +582,9 @@ ORDER BY OrderNumber, part.num]]>
 								<rightPen lineWidth="1.25"/>
 							</box>
 							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="246" height="14" uuid="9425b3dc-3aa7-41b2-b1d3-7be2c9f70ed2"/>
+								<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="250" height="14" uuid="9425b3dc-3aa7-41b2-b1d3-7be2c9f70ed2"/>
 								<box leftPadding="2" rightPadding="2"/>
 								<textFieldExpression><![CDATA[$F{PICKITEMPARTDESC}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-				</jr:table>
-			</componentElement>
-			<componentElement>
-				<reportElement key="table" x="0" y="40" width="390" height="66" uuid="e03d5afc-13eb-44f2-a4cb-bc79725d7c47"/>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="AllSectionsNoDetail">
-					<datasetRun subDataset="TotalSum" uuid="52f23016-10cf-4815-bcea-923fd444d509">
-						<datasetParameter name="pickID">
-							<datasetParameterExpression><![CDATA[$F{PICKID}]]></datasetParameterExpression>
-						</datasetParameter>
-						<datasetParameter name="ckShowCommitted">
-							<datasetParameterExpression><![CDATA[$P{ckShowCommitted}]]></datasetParameterExpression>
-						</datasetParameter>
-					</datasetRun>
-					<jr:column width="90" uuid="5de5ef32-0ce9-4180-9e00-1a74153c7e23">
-						<jr:columnHeader height="23" rowSpan="1">
-							<box>
-								<pen lineWidth="1.25"/>
-								<topPen lineWidth="1.25"/>
-								<leftPen lineWidth="1.25"/>
-								<bottomPen lineWidth="1.25"/>
-								<rightPen lineWidth="1.25"/>
-							</box>
-							<staticText>
-								<reportElement x="0" y="0" width="90" height="20" uuid="dd307657-27f9-4cd8-837a-8c8d898633e5"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="11" isBold="true"/>
-								</textElement>
-								<text><![CDATA[QuantitySum]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField isStretchWithOverflow="true" pattern="###0.##" isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="90" height="20" uuid="dd2e3c21-6e83-4ca9-a3b7-7306e50ac8d3"/>
-								<textFieldExpression><![CDATA[$F{QuantitySum}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="193" uuid="9b9c17d6-430a-4eb3-ac89-be4eaa2b5039">
-						<jr:columnHeader height="23" rowSpan="1">
-							<box>
-								<pen lineWidth="1.25"/>
-								<topPen lineWidth="1.25"/>
-								<leftPen lineWidth="1.25"/>
-								<bottomPen lineWidth="1.25"/>
-								<rightPen lineWidth="1.25"/>
-							</box>
-							<staticText>
-								<reportElement x="0" y="0" width="192" height="20" uuid="865cdad8-837f-40c0-b642-fae5e4d412d0"/>
-								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font size="11" isBold="true"/>
-								</textElement>
-								<text><![CDATA[DescriptionSum]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:detailCell style="table_TD" height="20" rowSpan="1">
-							<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="192" height="20" uuid="287dc547-657c-47a8-9cfc-cf7e260fc8be"/>
-								<textFieldExpression><![CDATA[$F{DescriptionSum}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
@@ -602,9 +593,9 @@ ORDER BY OrderNumber, part.num]]>
 		</band>
 	</summary>
 	<noData>
-		<band height="26">
+		<band height="14">
 			<staticText>
-				<reportElement x="0" y="12" width="540" height="14" uuid="e370e6df-5815-4f34-ab40-1868f51e71f3"/>
+				<reportElement x="0" y="0" width="552" height="14" uuid="e370e6df-5815-4f34-ab40-1868f51e71f3"/>
 				<textElement textAlignment="Center">
 					<font fontName="Arial" isBold="true"/>
 				</textElement>

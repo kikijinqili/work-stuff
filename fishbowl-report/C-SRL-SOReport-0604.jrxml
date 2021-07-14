@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="C-SRL-SOReport" pageWidth="792" pageHeight="612" orientation="Landscape" columnWidth="704" leftMargin="44" rightMargin="44" topMargin="54" bottomMargin="54" uuid="30099e57-3f78-4048-aed1-274b44e8e585">
 	<property name="ireport.zoom" value="1.2396694214876032"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="1203"/>
+	<property name="ireport.y" value="192"/>
 	<subDataset name="LineData" uuid="439f672f-bec6-4dd9-a1ee-732c27b05fa9">
 		<parameter name="soid" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
@@ -26,7 +26,8 @@ where soitem.soid = $P{soid}
 and not ( soitem.typeid in (40, 60) or soitem.productnum in ('0000','0001', '0000-2') )
 and soitem.showitemflag = 1
 and lower(soitem.note) <> 'cancelled'
-order by soitem.productnum desc, soitem.solineitem asc]]>
+
+ORDER BY (CASE WHEN soitem.typeid = 30 THEN 1 ELSE 0 END), soitem.solineitem ASC, soitem.productnum DESC]]>
 		</queryString>
 		<field name="Item No." class="java.lang.Integer"/>
 		<field name="Catalog No." class="java.lang.String"/>
@@ -98,23 +99,24 @@ where postransaction.soid = (select id from so where num = '22085' )]]>
     billphone.datus as billphone,
 
     so.num as invoiceno,
-    so.datecompleted as invoicedate,
+    ship.dateShipped as invoicedate,
     so.customerpo as orderno,
-    DATE_ADD(so.datecompleted, INTERVAL paymentterms.netdays DAY) as duedate,
+    DATE_ADD(ship.dateShipped, INTERVAL paymentterms.netdays DAY) as duedate,
     customer.number as customerno,
 
-    lt.allitems-lt.shipping-lt.dryice as amtsubtotal,
+    lt.allitems as amtsubtotal,
     lt.shipping as amtshipping,
     lt.dryice as amtdryice,
     so.totaltax as amttax,
-    lt.allitems+so.totaltax as amttotal,
+    lt.allitems+so.totaltax+lt.shipping+lt.dryice as amttotal,
     COALESCE(pt.amt,0) as amtpayments,
-    (lt.allitems+so.totaltax)-COALESCE(pt.amt,0) as amtamountdue,
+    (lt.allitems+so.totaltax+lt.shipping+lt.dryice)-COALESCE(pt.amt,0) as amtamountdue,
     pt.ct as paymentcount,
     billfax.datus as billtofax
 
 
 from so
+    LEFT JOIN ship ON ship.soId = so.id
     left join addressmultilinesoview on addressmultilinesoview.soid = so.id
     join customer on customer.id = so.customerid
     left join paymentterms on paymentterms.id = so.paymenttermsid
@@ -135,8 +137,8 @@ from so
     left join (select soid, count(id) as ct, sum(amount) amt from postransaction group by soid ) as pt on pt.soid = so.id
     left join (select
                         soitem.soid,
-                        sum( IF( soitem.typeid <> 40 /* Subtotal lines */, soitem.qtytofulfill * soitem.unitprice, 0 ) ) as allitems,
-                        SUM( IF( soitem.productnum IN ('0006','0007','Shipping') , soitem.qtytofulfill * soitem.unitprice, 0 )) AS shipping,
+                        sum( IF( soitem.productnum NOT IN ('Shipping','0000','0001','0000-2'), soitem.qtytofulfill * soitem.unitprice, 0 ) ) as allitems,
+                        SUM( IF( soitem.productnum IN ('Shipping') , soitem.qtytofulfill * soitem.unitprice, 0 )) AS shipping,
                         SUM( IF( soitem.productnum in ('0000','0001','0000-2') , soitem.qtytofulfill * soitem.unitprice, 0 ) ) as dryice
                 from soitem
                 where lower(soitem.note) <> 'cancelled'
@@ -1326,12 +1328,12 @@ D-U-N-S Number: 00-288-2210]]></text>
 					<text><![CDATA[Please visit our website at www.sciencellonline.com!]]></text>
 				</staticText>
 				<staticText>
-					<reportElement positionType="Float" x="538" y="31" width="94" height="11" uuid="2c231047-fc1e-4673-8b48-227e5b7099ec"/>
+					<reportElement positionType="Float" x="567" y="31" width="65" height="11" uuid="2c231047-fc1e-4673-8b48-227e5b7099ec"/>
 					<box rightPadding="15"/>
 					<textElement textAlignment="Right">
 						<font size="8" isBold="false"/>
 					</textElement>
-					<text><![CDATA[Shipping & Handling]]></text>
+					<text><![CDATA[Shipping]]></text>
 				</staticText>
 				<staticText>
 					<reportElement positionType="Float" x="567" y="75" width="65" height="11" uuid="6a3c1f5b-e873-4730-8d0b-ffa38732a78f"/>

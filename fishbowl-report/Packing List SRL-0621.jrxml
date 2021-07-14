@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="C-SRL-PackingList" pageWidth="612" pageHeight="792" columnWidth="524" leftMargin="44" rightMargin="44" topMargin="54" bottomMargin="54" uuid="19fd9916-619f-4e42-8a62-efefa3944512">
-	<property name="ireport.zoom" value="1.0514816984441795"/>
+	<property name="ireport.zoom" value="1.9965000000000082"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="48"/>
 	<subDataset name="LineData" uuid="03819cff-48d1-4fec-b8d4-da805de8e777">
 		<parameter name="soid" class="java.lang.Integer">
 			<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
@@ -12,19 +12,18 @@
 		</parameter>
 		<queryString>
 			<![CDATA[select
-    soitem.solineitem as "Item No.",
-    soitem.productnum as "Catalog No.",
-    soitem.description as "Description",
-    soitem.note,
-    product.details,
-    SUM(shipitem.qtyshipped) as "Qty"
+    solineitem as "Item No.",
+    productnum as "Catalog No.",
+    description as "Description",
+    note,
+    qtyToFulfill as "Qty"
 
-from shipitem
-    join soitem on soitem.id = shipitem.soitemid
-    left join product on product.id = soitem.productid
+from soitem
 
-where shipitem.shipid = $P{shipID}
-and not ( soitem.typeid in (60) or soitem.productnum in ('0000','0001') )
+where soitem.soId = (select soId FROM ship where ship.id = $P{shipID})
+and not ( soitem.typeid in ('60','30','31','40') or soitem.productnum in ('0000','0000-2','0001','0006','0007') )
+and soitem.showItemFlag = 1
+
 
 group by 1,2,3,4,5]]>
 		</queryString>
@@ -32,7 +31,6 @@ group by 1,2,3,4,5]]>
 		<field name="Catalog No." class="java.lang.String"/>
 		<field name="Description" class="java.lang.String"/>
 		<field name="NOTE" class="java.lang.String"/>
-		<field name="DETAILS" class="java.lang.String"/>
 		<field name="Qty" class="java.lang.Double"/>
 	</subDataset>
 	<subDataset name="PaymentData" uuid="4bebe8d2-3811-4209-8e0b-4fd4d42e0a70">
@@ -234,7 +232,7 @@ where so.id = (select soid from ship where ship.id = $P{shipID} and ship.orderty
 									<textElement textAlignment="Center">
 										<font size="9"/>
 									</textElement>
-									<textFieldExpression><![CDATA[$F{Item No.}]]></textFieldExpression>
+									<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
 								</textField>
 							</jr:detailCell>
 						</jr:column>
@@ -324,7 +322,7 @@ where so.id = (select soid from ship where ship.id = $P{shipID} and ship.orderty
 	<background>
 		<band height="684" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="250" width="42" height="434" uuid="35779191-2746-42f0-822c-5bf5d4c1b35d"/>
+				<reportElement x="452" y="252" width="72" height="14" uuid="c622c52b-d09d-4fe3-8697-0a9098ac47f1"/>
 				<box>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -334,7 +332,7 @@ where so.id = (select soid from ship where ship.id = $P{shipID} and ship.orderty
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="239" width="42" height="11" uuid="9563c9d6-1269-4b20-97aa-ea86e58972df"/>
+				<reportElement x="0" y="266" width="42" height="418" uuid="35779191-2746-42f0-822c-5bf5d4c1b35d"/>
 				<box>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -344,7 +342,7 @@ where so.id = (select soid from ship where ship.id = $P{shipID} and ship.orderty
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="42" y="250" width="72" height="434" uuid="ec1f4fcf-2c5a-40da-8db0-f229b4c68406"/>
+				<reportElement x="0" y="252" width="42" height="14" uuid="9563c9d6-1269-4b20-97aa-ea86e58972df"/>
 				<box>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -354,7 +352,7 @@ where so.id = (select soid from ship where ship.id = $P{shipID} and ship.orderty
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="42" y="239" width="72" height="11" uuid="164092b0-ee62-4aad-8577-0ba85fe9507e"/>
+				<reportElement x="42" y="266" width="72" height="418" uuid="ec1f4fcf-2c5a-40da-8db0-f229b4c68406"/>
 				<box>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -364,7 +362,7 @@ where so.id = (select soid from ship where ship.id = $P{shipID} and ship.orderty
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="114" y="250" width="338" height="434" uuid="04b5e3c3-3675-4b4a-a920-2fb62022e400"/>
+				<reportElement x="42" y="252" width="72" height="14" uuid="164092b0-ee62-4aad-8577-0ba85fe9507e"/>
 				<box>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -374,7 +372,7 @@ where so.id = (select soid from ship where ship.id = $P{shipID} and ship.orderty
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="114" y="239" width="338" height="11" uuid="55e58122-0680-47e6-be9d-1e5e718707e8"/>
+				<reportElement x="114" y="266" width="338" height="418" uuid="04b5e3c3-3675-4b4a-a920-2fb62022e400"/>
 				<box>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -384,7 +382,7 @@ where so.id = (select soid from ship where ship.id = $P{shipID} and ship.orderty
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="452" y="250" width="72" height="434" uuid="f9d151cb-5491-4b2c-bb75-42c72c65d204"/>
+				<reportElement x="114" y="252" width="338" height="14" uuid="55e58122-0680-47e6-be9d-1e5e718707e8"/>
 				<box>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -394,7 +392,7 @@ where so.id = (select soid from ship where ship.id = $P{shipID} and ship.orderty
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="452" y="239" width="72" height="11" uuid="c622c52b-d09d-4fe3-8697-0a9098ac47f1"/>
+				<reportElement x="452" y="266" width="72" height="418" uuid="f9d151cb-5491-4b2c-bb75-42c72c65d204"/>
 				<box>
 					<topPen lineWidth="0.25" lineStyle="Dashed"/>
 					<leftPen lineWidth="0.25" lineStyle="Dashed"/>
@@ -403,6 +401,15 @@ where so.id = (select soid from ship where ship.id = $P{shipID} and ship.orderty
 				</box>
 				<text><![CDATA[]]></text>
 			</staticText>
+			<textField>
+				<reportElement x="424" y="664" width="80" height="20" uuid="8a5d609a-bbb3-43d3-9187-631d1403b1c5"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="504" y="664" width="40" height="20" uuid="2b72419a-97a9-4a18-a168-89106f9503b7"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
 		</band>
 	</background>
 	<title>
@@ -410,6 +417,18 @@ where so.id = (select soid from ship where ship.id = $P{shipID} and ship.orderty
 	</title>
 	<pageHeader>
 		<band height="254" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="46" y="105" width="311" height="11" uuid="8733f51a-35fd-403e-ad96-322161a5f0ad">
+					<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") || $F{BILLCOUNTRY}.equalsIgnoreCase("Canada") || $F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SOLDTOADR3}]]></textFieldExpression>
+			</textField>
 			<rectangle radius="11">
 				<reportElement x="0" y="66" width="360" height="86" uuid="98515308-4ce8-4cbc-889c-d23d05850db8"/>
 				<graphicElement>
@@ -422,10 +441,6 @@ where so.id = (select soid from ship where ship.id = $P{shipID} and ship.orderty
 					<pen lineWidth="0.5" lineStyle="Solid"/>
 				</graphicElement>
 			</rectangle>
-			<image hAlign="Center" vAlign="Bottom">
-				<reportElement x="0" y="0" width="192" height="54" uuid="31298c80-e022-459e-859e-0a90dee57bce"/>
-				<imageExpression><![CDATA["Logo-300dpi.jpg"]]></imageExpression>
-			</image>
 			<staticText>
 				<reportElement x="192" y="0" width="122" height="54" uuid="5ec1c0b9-c27b-4d19-8bf6-bd416ccd7c93"/>
 				<box leftPadding="10"/>
@@ -435,7 +450,7 @@ where so.id = (select soid from ship where ship.id = $P{shipID} and ship.orderty
 				<text><![CDATA[1610 Faraday Ave
 Carlsbad, CA 92008
 Tel: (760) 602-8549
-Fax: (760 602-8575]]></text>
+Fax: (760) 602-8575]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="380" y="83" width="124" height="25" uuid="272d94eb-a532-417f-8b5a-da23e1d6eb75"/>
@@ -537,7 +552,7 @@ $F{BILLCOUNTRY} != null &&
 				<box leftPadding="3">
 					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
 				</box>
-				<textElement>
+				<textElement verticalAlignment="Bottom">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{SOLDTOZIP}]]></textFieldExpression>
@@ -550,7 +565,7 @@ $F{BILLCOUNTRY} != null &&
 !$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<text><![CDATA[ZIP]]></text>
@@ -584,7 +599,7 @@ $F{BILLCOUNTRY}.equalsIgnoreCase("Canada") ||
 $F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
 				</reportElement>
 				<box leftPadding="0"/>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<text><![CDATA[ZIP]]></text>
@@ -672,7 +687,7 @@ $F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
 				<box leftPadding="3">
 					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
 				</box>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{SOLDTOZIP}]]></textFieldExpression>
@@ -716,18 +731,6 @@ $F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
 				<text><![CDATA[City]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="46" y="105" width="311" height="11" uuid="8733f51a-35fd-403e-ad96-322161a5f0ad">
-					<printWhenExpression><![CDATA[$F{BILLCOUNTRY}.equalsIgnoreCase("United States") || $F{BILLCOUNTRY}.equalsIgnoreCase("Canada") || $F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
-				</reportElement>
-				<box>
-					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
-				</box>
-				<textElement>
-					<font size="8"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{SOLDTOADR3}]]></textFieldExpression>
-			</textField>
-			<textField isBlankWhenNull="true">
 				<reportElement x="46" y="94" width="311" height="11" uuid="88d7485e-91e6-4aea-9c30-bcc1ffb47e29"/>
 				<box>
 					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
@@ -764,7 +767,7 @@ $F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
 				<text><![CDATA[Email:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="46" y="140" width="311" height="12" uuid="7b4bcff6-adfb-4658-8fc8-e52c4fe28bfb"/>
+				<reportElement x="46" y="140" width="300" height="12" uuid="7b4bcff6-adfb-4658-8fc8-e52c4fe28bfb"/>
 				<box>
 					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
 				</box>
@@ -887,7 +890,7 @@ $F{BILLCOUNTRY} != null &&
 				<text><![CDATA[Email:]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="46" y="232" width="311" height="12" uuid="6776c9f5-4143-4b8d-a0b0-399023278bf5"/>
+				<reportElement x="46" y="232" width="300" height="12" uuid="6776c9f5-4143-4b8d-a0b0-399023278bf5"/>
 				<box>
 					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
 				</box>
@@ -953,7 +956,7 @@ $F{BILLCOUNTRY} != null &&
 				<text><![CDATA[Country]]></text>
 			</staticText>
 			<textField isBlankWhenNull="true">
-				<reportElement x="46" y="116" width="311" height="12" uuid="49162960-2b2a-493d-a578-a9fc22acba6a">
+				<reportElement x="46" y="115" width="311" height="12" uuid="49162960-2b2a-493d-a578-a9fc22acba6a">
 					<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") &&
 $F{BILLCOUNTRY} != null &&
 !$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") &&
@@ -962,7 +965,7 @@ $F{BILLCOUNTRY} != null &&
 				<box>
 					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
 				</box>
-				<textElement>
+				<textElement verticalAlignment="Middle">
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{BILLCOUNTRY}]]></textFieldExpression>
@@ -1038,6 +1041,32 @@ $F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
 					<font size="8"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{SOLDTOPHONE}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="0" y="0" width="136" height="54" uuid="647812e4-757b-4b64-a226-e3a24c2fa313"/>
+				<imageExpression><![CDATA["Logo-300dpi.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="274" y="209" width="13" height="11" uuid="73fbd068-b76f-4514-afa5-cda1ace9531f">
+					<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") && $F{BILLCOUNTRY} != null && !$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") && !$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0"/>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[ZIP]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="287" y="209" width="70" height="11" uuid="ada2768c-9f77-4c10-a9e7-e6953b2ae150">
+					<printWhenExpression><![CDATA[!$F{BILLCOUNTRY}.equalsIgnoreCase("United States") && $F{BILLCOUNTRY} != null && !$F{BILLCOUNTRY}.equalsIgnoreCase("Canada") && !$F{BILLCOUNTRY}.equalsIgnoreCase("Mexico")]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="3">
+					<bottomPen lineWidth="0.25" lineStyle="Dotted"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{SHIPTOZIP}]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>

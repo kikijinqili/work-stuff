@@ -26,6 +26,7 @@ from shipitem
 where shipitem.shipid = $P{shipID}
 and not ( soitem.typeid in (60) or soitem.productnum in ('0000','0001') )
 
+
 group by 1,2,3,4,5]]>
 		</queryString>
 		<field name="Item No." class="java.lang.Integer"/>
@@ -83,9 +84,9 @@ where postransaction.soid = (select id from so where num = '22085' )]]>
     soldstate.code as soldtostate,
     so.billtozip as soldtozip,
     countryconst.name as soldtoCountry,
-    so.phone as soldtophone,
+    phone.datus as soldtophone,
     fax.datus as soldtofax,
-    soldtoEmail.datus as soldtoemail,
+    soldtoemail.datus as soldtoemail,
 
     so.SHIPTOname as SHIPTOname,
     (case
@@ -142,15 +143,15 @@ from so
     LEFT JOIN countryconst on so.shiptocountryid = countryconst.id
     LEFT JOIN countryconst billcountry on so.shiptocountryid = billcountry.id
     left join contact as phone on phone.addressid = address.id and phone.defaultflag = 1 and phone.typeid = 50
-    LEFT JOIN contact as soldtoEmail on soldtoemail.typeid = 60 and soldtoemail.defaultflag = 1 and soldtoemail.addressid = billaddress.id
+    LEFT JOIN contact as soldtoEmail on soldtoemail.typeid = 60 and soldtoemail.addressid = address.id and soldtoemail.defaultflag = 1
     left join contact as fax on fax.typeid = 40 and fax.addressid = address.id and fax.defaultflag =1
 
     left join (select soid, count(id) as ct, sum(amount) amt from postransaction group by soid ) as pt on pt.soid = so.id
     left join (select
                         soitem.soid,
                         sum(soitem.totalprice) as allitems,
-                        SUM( IF( soitem.productnum IN ('0006','0007','Shipping') , soitem.qtytofulfill * soitem.unitprice, 0 )) AS shipping,
-                        SUM( IF( soitem.productnum in ('0000', '0000-2', '0001') , soitem.totalprice , 0 ) ) as dryice
+                        SUM( IF( soitem.typeid = 60 /* Shipping Line Item TYpes */ , soitem.totalprice , 0 ) ) as shipping,
+                        SUM( IF( soitem.productnum in ('0000','0001') , soitem.totalprice , 0 ) ) as dryice
                 from soitem
                 group by soitem.soid) as lt on lt.soid = so.id
 
